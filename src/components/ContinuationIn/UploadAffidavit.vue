@@ -2,9 +2,8 @@
   <div id="upload-affidavit">
     <!-- Upload Affidavit -->
     <p :class="{ 'error-text': getShowErrors && !affivaditFileValid }">
-      There is additional information required by the Registrar for an unlimited liability corporation
-      from Alberta. You are required to provide either a <strong>Director's Affidavit</strong> or a
-      <strong>Court Order</strong>. This will be reviewed by BC Registries staff.
+      You are required to provide either a <strong>Director's Affidavit</strong> or a
+      <strong>Court Order</strong>. This will be reviewed by BC Registries.
     </p>
 
     <ul>
@@ -64,14 +63,9 @@
       </v-btn>
     </div>
 
-    <ExpandableHelp
-      class="mt-6"
-      helpLabel="Help with Unlimited Liability Corporation Information"
-    >
-      <template #content>
-        <UnlimitedLiabilityCorporationHelp />
-      </template>
-    </ExpandableHelp>
+    <p class="info-text font-14 mt-4">
+      All uploaded files will be renamed automatically.
+    </p>
   </div>
 </template>
 
@@ -83,14 +77,10 @@ import { StatusCodes } from 'http-status-codes'
 import { DateMixin, DocumentMixin } from '@/mixins'
 import { ExistingBusinessInfoIF, PresignedUrlIF } from '@/interfaces'
 import FileUploadPreview from '@/components/common/FileUploadPreview.vue'
-import { ExpandableHelp } from '@bcrs-shared-components/expandable-help'
-import UnlimitedLiabilityCorporationHelp from './UnlimitedLiabilityCorporationHelp.vue'
 
 @Component({
   components: {
-    ExpandableHelp,
-    FileUploadPreview,
-    UnlimitedLiabilityCorporationHelp
+    FileUploadPreview
   }
 })
 export default class UploadAffidavit extends Mixins(DateMixin, DocumentMixin) {
@@ -220,5 +210,9 @@ ul {
 // align the remove icon with the button label
 .v-icon.mdi-close {
   padding-top: 1px;
+}
+
+.info-text {
+  color: $gray6;
 }
 </style>
