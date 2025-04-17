@@ -326,6 +326,11 @@ export const useStore = defineStore('store', {
       return this.stateModel.accountInformation
     },
 
+    /** The Authorizations object. */
+    getAuthorizations (): any {
+      return this.stateModel.authorizations
+    },
+
     /** Whether the entity is a base company (BC/BEN/CC/ULC or C/CBEN/CCC/CUL). */
     isBaseCompany (): boolean {
       return (
@@ -1185,6 +1190,7 @@ export const useStore = defineStore('store', {
       this.stateModel.tombstone.keycloakGuid = keycloakGuid
     },
     setKeycloakRoles (keycloakRoles: Array<string>) {
+      console.log('*** keycloak roles =', keycloakRoles)
       this.stateModel.tombstone.keycloakRoles = keycloakRoles
     },
     setUserAddress (userAddress: AddressIF) {
@@ -1253,6 +1259,10 @@ export const useStore = defineStore('store', {
     },
     setAccountInformation (accountInfo: AccountInformationIF) {
       this.stateModel.accountInformation = accountInfo
+    },
+    setAuthorizations (authorizations: any) {
+      console.log('*** authorizations =', authorizations)
+      this.stateModel.authorizations = authorizations
     },
     setOrgInformation (orgInfo: OrgInformationIF) {
       this.stateModel.orgInformation = orgInfo

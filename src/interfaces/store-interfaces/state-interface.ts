@@ -38,6 +38,7 @@ export interface StateModelIF {
   currentJsDate: Date
   tombstone: TombstoneIF
   accountInformation: AccountInformationIF
+  authorizations: any // *** TODO: create interface
   orgInformation: OrgInformationIF
   business: BusinessIF
   businessContact: ContactPointIF

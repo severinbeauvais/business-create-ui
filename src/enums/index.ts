@@ -1,4 +1,6 @@
+export * from './allowableActions'
 export * from './amalgamationEnums'
+export * from './authorizedActions'
 export * from './bulletListTypes'
 export * from './dissolutionStatementTypes'
 export * from './dissolutionTypes'

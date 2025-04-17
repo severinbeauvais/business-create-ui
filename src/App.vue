@@ -320,6 +320,7 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
   @Getter(useStore) isSbcStaff!: boolean
 
   @Action(useStore) setAccountInformation!: (x: AccountInformationIF) => void
+  @Action(useStore) setAuthorizations!: (x: any) => void
   @Action(useStore) setAdminFreeze!: (x: boolean) => void
   @Action(useStore) setAlternateName!: (x: string) => void
   @Action(useStore) setBusinessId!: (x: string) => void
@@ -929,6 +930,7 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
   private async handleDraftWithTempId (tempId: string): Promise<void> {
     // ensure user is authorized to use this IA
     await this.checkAuth(tempId).catch(error => {
+      console.log('Auth error =', error) // eslint-disable-line no-console
       this.accountAuthorizationDialog = true
       throw error
     })
@@ -1318,12 +1320,18 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
   /** Fetches authorizations and verifies roles. */
   private async checkAuth (id: string): Promise<any> {
     // NB: will throw if API error
-    const authRoles = await AuthServices.fetchAuthorizations(id)
+    const authorizations = await AuthServices.fetchAuthorizations(id)
+    const authRoles = authorizations.roles || []
 
-    // verify that array has at least one role
-    // NB: roles array may contain 'view', 'edit', 'staff' or nothing
-    if (!Array.isArray(authRoles) || authRoles.length < 1) {
+    if (!Array.isArray(authRoles)) {
       throw new Error('Invalid auth roles')
+    }
+
+    this.setAuthorizations(authorizations)
+
+    // verify that array has "view" or "staff" roles
+    if (!authRoles.find(r => r === 'view' || r === 'staff')) {
+      throw new Error('Missing required role')
     }
   }
 
