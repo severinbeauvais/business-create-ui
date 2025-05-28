@@ -697,7 +697,7 @@ describe('Actions component - Conditionally disabled File and Pay button', () =>
   })
 
   it('Enables File and Pay button for regular user', async () => {
-    store.setAuthRoles([AuthorizationRoles.VIEW])
+    store.setAuthRoles([AuthorizationRoles.PUBLIC_USER])
     await Vue.nextTick()
     expect(wrapper.find('#file-pay-btn').exists()).toBe(true)
     expect(wrapper.find('#file-pay-btn').attributes('disabled')).toBeUndefined()
