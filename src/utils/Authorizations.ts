@@ -69,14 +69,13 @@ const BusinessRegistryStaffRoles = [
   AuthorizedActions.FILE_AND_PAY,
   AuthorizedActions.FIRM_ADD_BUSINESS,
   AuthorizedActions.FIRM_DISSOLUTION_FILING,
-  AuthorizedActions.FIRM_EDITABLE_COMPLETING_PARTY,
   AuthorizedActions.FIRM_EDITABLE_EMAIL_ADDRESS,
   AuthorizedActions.FIRM_NO_MIN_START_DATE,
   AuthorizedActions.INCORPORATION_APPLICATION_FILING,
   AuthorizedActions.NO_COMPLETING_PARTY_MESSAGE_BOX,
   AuthorizedActions.NO_CONTACT_INFO,
   AuthorizedActions.REGISTRATION_FILING,
-  AuthorizedActions.RESTORATION_FILING,
+  AuthorizedActions.RESTORATION_REINSTATEMENT_FILING,
   AuthorizedActions.SAVE_DRAFT,
   AuthorizedActions.STAFF_BREADCRUMBS,
   AuthorizedActions.STAFF_COMMENTS,
@@ -89,34 +88,38 @@ const BusinessRegistryStaffRoles = [
  * The roles if the user is Maximus Staff.
  * Ultimately we won't need this list and we'll just check auth roles for everything.
  */
-const MaximusStaffRoles = []
+const MaximusStaffRoles = [
+
+]
 
 /**
  * The roles if the user is Contact Centre Staff.
  * Ultimately we won't need this list and we'll just check auth roles for everything.
  */
-const ContactCentreStaffRoles = []
+const ContactCentreStaffRoles = [
+
+]
 
 /**
  * The roles if the user is SBC Field Office Staff (aka SBC Staff Tier 2).
  * Ultimately we won't need this list and we'll just check auth roles for everything.
  */
 const SbcFieldOfficeStaffRoles = [
-  AuthorizedActions.AMALGAMATION_FILING,
-  AuthorizedActions.BLANK_CERTIFY_STATE,
-  AuthorizedActions.BLANK_COMPLETING_PARTY,
-  AuthorizedActions.CONTINUATION_IN_FILING,
-  AuthorizedActions.EDITABLE_CERTIFY_NAME,
-  AuthorizedActions.FILE_AND_PAY,
-  AuthorizedActions.FIRM_DISSOLUTION_FILING,
-  AuthorizedActions.FIRM_EDITABLE_COMPLETING_PARTY,
-  AuthorizedActions.FIRM_EDITABLE_EMAIL_ADDRESS,
-  AuthorizedActions.INCORPORATION_APPLICATION_FILING,
-  AuthorizedActions.REGISTRATION_FILING,
-  AuthorizedActions.SAVE_DRAFT,
+  // AuthorizedActions.AMALGAMATION_FILING,
+  // AuthorizedActions.BLANK_CERTIFY_STATE,
+  // AuthorizedActions.BLANK_COMPLETING_PARTY,
+  // AuthorizedActions.CONTINUATION_IN_FILING,
+  // AuthorizedActions.EDITABLE_CERTIFY_NAME,
+  // AuthorizedActions.EDITABLE_COMPLETING_PARTY,
+  // AuthorizedActions.FILE_AND_PAY,
+  // AuthorizedActions.FIRM_DISSOLUTION_FILING,
+  // AuthorizedActions.FIRM_EDITABLE_EMAIL_ADDRESS,
+  // AuthorizedActions.INCORPORATION_APPLICATION_FILING,
+  // AuthorizedActions.REGISTRATION_FILING,
+  // AuthorizedActions.SAVE_DRAFT,
   AuthorizedActions.SBC_BREADCRUMBS,
-  AuthorizedActions.THIRD_PARTY_CERTIFY_STMT,
-  AuthorizedActions.VOLUNTARY_DISSOLUTION_FILING
+  // AuthorizedActions.THIRD_PARTY_CERTIFY_STMT,
+  // AuthorizedActions.VOLUNTARY_DISSOLUTION_FILING
 ]
 
 /**

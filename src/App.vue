@@ -744,7 +744,7 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
         this.accountAuthorizationDialog = true
         throw new Error('You are not authorized to access Registration filings.')
       }
-      if (this.isRestorationFiling && !IsAuthorized(AuthorizedActions.RESTORATION_FILING)) {
+      if (this.isRestorationFiling && !IsAuthorized(AuthorizedActions.RESTORATION_REINSTATEMENT_FILING)) {
         this.accountAuthorizationDialog = true
         throw new Error('You are not authorized to access Restoration filings.')
       }
