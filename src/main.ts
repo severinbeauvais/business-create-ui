@@ -49,7 +49,7 @@ async function start () {
   }
 
   // fetch config from environment and API
-  await FetchConfig()
+  FetchConfig()
 
   if (GetFeatureFlag('sentry-enable')) {
     // initialize Sentry

@@ -1,5 +1,6 @@
 import { AxiosInstance as axios } from '@/utils'
 import { ColinBusinessIF } from '@/interfaces'
+import { AxiosRequestConfig } from 'axios'
 
 /**
  * Class that provides integration with the COLIN API.
@@ -11,6 +12,15 @@ export default class ColinServices {
   }
 
   /**
+   * Additional or overridden Axios request headers.
+   * See default Axios headers in AxiosInstance.ts.
+   */
+  static get config (): AxiosRequestConfig {
+    // this service doesn't need to add/override default config
+    return {}
+  }
+
+  /**
    * Fetches the public business data from COLIN.
    * @param businessId the business identifier (aka entity inc no)
    * @returns a promise to return the data
@@ -18,10 +28,11 @@ export default class ColinServices {
   static async fetchPublicBusiness (businessId: string): Promise<ColinBusinessIF> {
     const url = `${this.colinApiUrl}businesses/${businessId}/public`
 
-    return axios.get(url).then(response => {
-      const data = response?.data
-      if (!data) throw new Error('Invalid API response')
-      return data.business
-    })
+    return axios.get(url, this.config)
+      .then(response => {
+        const data = response?.data
+        if (!data) throw new Error('Invalid API response')
+        return data.business
+      })
   }
 }

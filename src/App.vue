@@ -256,8 +256,8 @@ import * as Views from '@/views'
 
 // Mixins, interfaces, etc
 import { CommonMixin, DateMixin, FilingTemplateMixin, NameRequestMixin } from '@/mixins'
-import { AccountInformationIF, AddressIF, BreadcrumbIF, BusinessWarningIF, CompletingPartyIF,
-  ConfirmDialogType, EmptyFees, FeesIF, FilingDataIF, OrgInformationIF, PartyIF, ResourceIF,
+import { AccountInformationIF, AddressIF, BreadcrumbIF, BusinessIF, BusinessWarningIF, CompletingPartyIF,
+  ConfirmDialogType, EmptyFees, FeesIF, FilingDataIF, NameRequestIF, OrgInformationIF, PartyIF, ResourceIF,
   StepIF } from '@/interfaces'
 import { AmalgamationRegResources, AmalgamationShortResources, ContinuationInResources,
   DissolutionResources, IncorporationResources, RegistrationResources, RestorationResources,
@@ -858,13 +858,14 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
       // (currently used for dissolution filings only)
       const filingFees = []
       for (const filingData of this.getFilingData) {
-        await PayServices.fetchFilingFees(filingData.filingTypeCode, filingData.entityType, true)
-          .then(res => filingFees.push(res))
-          .catch(error => {
-            console.log('Failed to fetch filing fees, error =', error) // eslint-disable-line no-console
-            // return a valid fees structure
-            filingFees.push(cloneDeep(EmptyFees))
-          })
+        try {
+          const ff = await PayServices.fetchFilingFees(filingData.filingTypeCode, filingData.entityType, true)
+          filingFees.push(ff)
+        } catch (error) {
+          console.log('Failed to fetch filing fees, error =', error) // eslint-disable-line no-console
+          // return a valid fees structure
+          filingFees.push(cloneDeep(EmptyFees))
+        }
       }
       this.setFeePrices(filingFees)
 
@@ -1055,12 +1056,13 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
       const nrNumber = filing[filing.header.name].nameRequest.nrNumber
       const applicantPhone = filing[filing.header.name].nameRequest.applicantPhone // may be undefined
       const applicantEmail = filing[filing.header.name].nameRequest.applicantEmail // may be undefined
-      const nrResponse = await LegalServices.fetchNameRequest(nrNumber, applicantPhone, applicantEmail)
-        .catch(error => {
-          console.log('NR fetch error =', error) // eslint-disable-line no-console
-          // this will trigger NR not found error, below
-          return null
-        })
+      let nrResponse: NameRequestIF
+      try {
+        nrResponse = await LegalServices.fetchNameRequest(nrNumber, applicantPhone, applicantEmail)
+      } catch (error) {
+        console.log('Failed to fetch NR, error =', error) // eslint-disable-line no-console
+        nrResponse = null
+      }
 
       //
       // The NR checks below are sort-of a duplicate of code in NameRequestMixin::validateNameRequest()
@@ -1279,7 +1281,13 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
 
   /** Fetches and stores business info. */
   private async loadBusinessInfo (businessId: string): Promise<void> {
-    const business = await LegalServices.fetchBusinessInfo(businessId).catch(() => {})
+    let business: BusinessIF
+    try {
+      business = await LegalServices.fetchBusinessInfo(businessId)
+    } catch (error) {
+      console.log('Failed to fetch business info, error =', error) // eslint-disable-line no-console
+      business = null
+    }
 
     if (!business) {
       throw new Error('Invalid business info')
