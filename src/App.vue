@@ -678,17 +678,6 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
     // reset errors in case this method is called more than once (ie, retry)
     this.resetFlags()
 
-    // only check FF when not in Vitest tests
-    if (import.meta.env.VITEST === undefined) {
-      // check that current route matches a supported filing type
-      const supportedFilings = await GetFeatureFlag('supported-filings')
-      if (!supportedFilings?.includes(this.$route.meta.filingType)) {
-        window.alert('This filing type is not available at the moment. Please check again later.')
-        this.goToDashboard(true)
-        return
-      }
-    }
-
     try {
       // set current date from "real time" date from server
       this.setCurrentDate(this.dateToYyyyMmDd(this.getCurrentJsDate))
@@ -738,7 +727,40 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
         throw error // go to catch()
       }
 
-      // Now that we know what type of filing this is, and what the user's roles are, check if authorized.
+      // get user info
+      // must be called after we know filing type
+      const userInfo = await this.loadUserInfo().catch(error => {
+        console.log('User info error =', error) // eslint-disable-line no-console
+        if ([ErrorTypes.INVALID_USER_EMAIL, ErrorTypes.INVALID_USER_PHONE].includes(error.message)) {
+          this.accountContactMissingDialog = true
+        } else {
+          this.accountAuthorizationDialog = true
+        }
+        throw error // go to catch()
+      })
+
+      // update Launch Darkly with user info
+      // this allows targeted feature flags
+      await this.updateLaunchDarkly(userInfo).catch(error => {
+        // just log the error -- no need to halt app
+        console.log('Launch Darkly update error =', error) // eslint-disable-line no-console
+      })
+
+      // check that current route matches a supported filing type
+      // only check FF when not in Vitest tests
+      // must be called after LD is updated
+      if (import.meta.env.VITEST === undefined) {
+        const supportedFilings = await GetFeatureFlag('supported-filings')
+        if (!supportedFilings?.includes(this.$route.meta.filingType)) {
+          window.alert('This filing type is not available at the moment. Please check again later.')
+          this.goToDashboard(true)
+          return
+        }
+      }
+
+      // check if authorized
+      // must be called after we know what type of filing this is
+      // must be called after we know what the user's permissions are
       if (this.isAmalgamationFiling && !IsAuthorized(AuthorizedActions.AMALGAMATION_FILING)) {
         this.accountAuthorizationDialog = true
         throw new Error('You are not authorized to access Amalgamation filings.')
@@ -767,25 +789,6 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
         this.accountAuthorizationDialog = true
         throw new Error('You are not authorized to access Voluntary Dissolution filings.')
       }
-
-      // get user info
-      // must be called after we know filing type
-      const userInfo = await this.loadUserInfo().catch(error => {
-        console.log('User info error =', error) // eslint-disable-line no-console
-        if ([ErrorTypes.INVALID_USER_EMAIL, ErrorTypes.INVALID_USER_PHONE].includes(error.message)) {
-          this.accountContactMissingDialog = true
-        } else {
-          this.accountAuthorizationDialog = true
-        }
-        throw error // go to catch()
-      })
-
-      // update Launch Darkly with user info
-      // this allows targeted feature flags
-      await this.updateLaunchDarkly(userInfo).catch(error => {
-        // just log the error -- no need to halt app
-        console.log('Launch Darkly update error =', error) // eslint-disable-line no-console
-      })
 
       // set completing party
       this.setCompletingParty(this.getCompletingParties())
