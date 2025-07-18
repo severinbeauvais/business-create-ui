@@ -18,12 +18,13 @@ function getAccountId (): string {
   return accountId
 }
 
+// create a new, independent instance of Axios
 const instance = axios.create()
 
 // add request interceptor
 instance.interceptors.request.use(
   request => {
-    // don't add extra headers for Minio requests
+    // don't add headers (esp bearer token) for Minio requests
     if (request.url?.startsWith('https://minio')) {
       return request
     }

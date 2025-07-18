@@ -7,7 +7,7 @@ import { AxiosRequestConfig } from 'axios'
  * Class that provides integration with the Auth API.
  */
 export default class AuthServices {
-  /** The Auth API Gateway URL, from session storage. */
+  /** The Auth API Gateway URL. */
   static get authApiGwUrl (): string {
     return sessionStorage.getItem('AUTH_API_GW_URL')
   }

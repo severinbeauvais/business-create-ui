@@ -6,7 +6,7 @@ import { AxiosRequestConfig } from 'axios'
  * Class that provides integration with the COLIN API.
  */
 export default class ColinServices {
-  /** The COLIN API URL, from session storage. */
+  /** The COLIN API URL. */
   static get colinApiUrl (): string {
     return sessionStorage.getItem('COLIN_API_URL')
   }

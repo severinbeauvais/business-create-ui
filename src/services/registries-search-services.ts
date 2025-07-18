@@ -6,7 +6,7 @@ import { AxiosRequestConfig } from 'axios'
  * Class that provides integration with the Registries Search API.
  */
 export default class RegistriesSearchServices {
-  /** The Registries Search API URL, from session storage. */
+  /** The Registries Search API URL. */
   static get searchApiUrl (): string {
     return sessionStorage.getItem('REGISTRIES_SEARCH_API_URL')
   }

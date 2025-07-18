@@ -48,7 +48,7 @@ async function start () {
     await InitLdClient()
   }
 
-  // fetch config from environment and API
+  // fetch config and set it locally
   FetchConfig()
 
   if (GetFeatureFlag('sentry-enable')) {

@@ -8,7 +8,7 @@ import { AxiosRequestConfig } from 'axios'
  * Class that provides integration with the Pay API.
  */
 export default class PayServices {
-  /** The Pay API Gateway URL, from session storage. */
+  /** The Pay API Gateway URL. */
   static get payApiGwUrl (): string {
     return sessionStorage.getItem('PAY_API_GW_URL')
   }
