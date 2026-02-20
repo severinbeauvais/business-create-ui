@@ -711,6 +711,42 @@ describe('Voluntary Dissolution - Define Dissolution page for a BEN', () => {
       }
     })
 
+    // fetch addresses
+    vi.spyOn((LegalServices as any), 'fetchAddresses').mockResolvedValue({
+      registeredOffice: {
+        deliveryAddress: {
+          streetAddress: 'delivery_address - address line one',
+          addressCity: 'delivery_address city',
+          addressCountry: 'delivery_address country',
+          postalCode: 'V8V 8V8',
+          addressRegion: 'BC'
+        },
+        mailingAddress: {
+          streetAddress: 'mailing_address - address line one',
+          addressCity: 'mailing_address city',
+          addressCountry: 'mailing_address country',
+          postalCode: 'V8V 8V8',
+          addressRegion: 'BC'
+        }
+      },
+      recordsOffice: {
+        deliveryAddress: {
+          streetAddress: 'delivery_address - address line one',
+          addressCity: 'delivery_address city',
+          addressCountry: 'delivery_address country',
+          postalCode: 'V8V 8V8',
+          addressRegion: 'BC'
+        },
+        mailingAddress: {
+          streetAddress: 'mailing_address - address line one',
+          addressCity: 'mailing_address city',
+          addressCountry: 'mailing_address country',
+          postalCode: 'V8V 8V8',
+          addressRegion: 'BC'
+        }
+      }
+    })
+
     // GET staff comments
     // from shared component
     sinon.stub(utils.AxiosInstance, 'get').withArgs('https://legal-api.url/businesses/BC0870803/comments')

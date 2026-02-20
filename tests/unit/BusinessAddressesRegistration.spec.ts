@@ -11,7 +11,7 @@ const vuetify = new Vuetify({})
 setActivePinia(createPinia())
 const store = useStore()
 
-describe.skip('Business Address delivery address <same as> is unchecked by default', () => {
+describe.skip('Business Addresses delivery address <same as> is unchecked by default', () => {
   let wrapper: any
 
   const BUSINESS_ADDRESSES = {
@@ -74,7 +74,7 @@ describe.skip('Business Address delivery address <same as> is unchecked by defau
   })
 })
 
-describe.skip('Business Addresses', () => {
+describe.skip('Business Addresses - Registration', () => {
   let wrapper: any
 
   const registeredOffice = {
@@ -435,6 +435,6 @@ describe('Business Addresses - Summary', () => {
   })
 
   it('displays the summary ui when in summary mode', () => {
-    expect(wrapper.vm.$el.querySelector('.summary-section')).toBeDefined()
+    expect(wrapper.find('.summary-section').exists()).toBe(true)
   })
 })

@@ -5,13 +5,13 @@ import { AmalgamationMixin, DateMixin } from '@/mixins'
 import {
   AmalgamationFilingIF, BusinessAddressIF, ContactPointIF, CertifyIF, CompletingPartyIF,
   AuthorizationProofIF, ContinuationInFilingIF, CourtOrderIF, CourtOrderStepIF,
-  CreateMemorandumIF, CreateResolutionIF, CreateRulesIF, DefineCompanyIF, DissolutionFilingIF,
+  CreateMemorandumIF, CreateResolutionIF, CreateRulesIF, DissolutionFilingIF,
   DissolutionStatementIF, DocumentDeliveryIF, EffectiveDateTimeIF, EmptyNaics,
   ExistingBusinessInfoIF, IncorporationAgreementIF, IncorporationFilingIF, NaicsIF, NrApplicantIF,
   NameRequestFilingIF, NameTranslationIF, OfficeAddressIF, OrgPersonIF, PartyIF,
   RegistrationFilingIF, RegistrationStateIF, RestorationFilingIF, RestorationStateIF,
   ShareStructureIF, SpecialResolutionIF, StaffPaymentIF, StaffPaymentStepIF, UploadAffidavitIF,
-  ResolutionIF } from '@/interfaces'
+  ResolutionIF, RegisteredRecordsAddressesIF } from '@/interfaces'
 import {
   AmalgamationTypes, ApprovalTypes, AuthorizedActions, BusinessTypes, CoopTypes, DissolutionTypes,
   EffectOfOrders, FilingTypes, PartyTypes, RelationshipTypes, RestorationTypes, RoleTypes,
@@ -35,11 +35,11 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
   @Getter(useStore) getBusinessId!: string
   @Getter(useStore) getBusinessLegalName!: string
   @Getter(useStore) getBusinessLegalType!: CorpTypeCd
-  @Getter(useStore) getBusinessOfficeAddress!: OfficeAddressIF
   @Getter(useStore) getBusinessStartDate!: string
   @Getter(useStore) getCertifyState!: CertifyIF
   @Getter(useStore) getCompletingParty!: CompletingPartyIF
   @Getter(useStore) getContinuationInAuthorizationProof!: AuthorizationProofIF
+  @Getter(useStore) getCooperativeType!: CoopTypes
   @Getter(useStore) getCorrectNameOption!: CorrectNameOptions
   @Getter(useStore) getCourtOrderStep!: CourtOrderStepIF
   @Getter(useStore) getCreateMemorandumStep!: CreateMemorandumIF
@@ -47,7 +47,7 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
   @Getter(useStore) getCreateResolutionStep!: CreateResolutionIF
   @Getter(useStore) getCreateShareStructureStep!: ShareStructureIF
   // @Getter(useStore) getCurrentDate!: string
-  @Getter(useStore) getDefineCompanyStep!: DefineCompanyIF
+  @Getter(useStore) getCustodialOfficeAddress!: OfficeAddressIF
   @Getter(useStore) getDissolutionDate!: string
   @Getter(useStore) getDissolutionCustodian!: OrgPersonIF
   @Getter(useStore) getDissolutionStatementStep!: DissolutionStatementIF
@@ -64,6 +64,7 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
   @Getter(useStore) getNameRequestApprovedName!: string
   @Getter(useStore) getNameRequestNumber!: string
   @Getter(useStore) getNameTranslations!: NameTranslationIF[]
+  @Getter(useStore) getOfficeAddresses!: RegisteredRecordsAddressesIF
   @Getter(useStore) getRegistration!: RegistrationStateIF
   @Getter(useStore) getResolution!: any
   @Getter(useStore) getResolutions!: ResolutionIF[]
@@ -80,7 +81,6 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
   @Action(useStore) setAmalgamationType!: (x: AmalgamationTypes) => void
   // @Action(useStore) setAmalgamatingBusinesses!: (x: Array<any>) => void
   @Action(useStore) setAmalgamationCourtApproval!: (x: boolean) => void
-  @Action(useStore) setBusinessAddress!: (x: OfficeAddressIF) => void
   // @Action(useStore) setBusinessContact!: (x: ContactPointIF) => void
   @Action(useStore) setBusinessStartDate!: (x: string) => void
   @Action(useStore) setCertifyState!: (x: CertifyIF) => void
@@ -88,6 +88,7 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
   @Action(useStore) setCooperativeType!: (x: CoopTypes) => void
   // @Action(useStore) setCorrectNameOption!: (x: CorrectNameOptions) => void
   @Action(useStore) setCourtOrderFileNumber!: (x: string) => void
+  @Action(useStore) setCustodialOfficeAddress!: (x: OfficeAddressIF) => void
   @Action(useStore) setCustodianOfRecords!: (x: OrgPersonIF) => void
   @Action(useStore) setDissolutionDate!: (x: string) => void
   @Action(useStore) setDissolutionStatementStepData!: (x: DissolutionStatementIF) => void
@@ -155,7 +156,7 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
           legalType: this.getEntityType
         },
         nameTranslations: this.getNameTranslations,
-        offices: this.getDefineCompanyStep.officeAddresses,
+        offices: this.getOfficeAddresses,
         contactPoint: {
           email: this.getBusinessContact.email || '',
           phone: this.getBusinessContact.phone || '',
@@ -399,7 +400,7 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
           nrNumber: this.getNameRequestNumber || undefined
         },
         nameTranslations: this.getNameTranslations,
-        offices: this.getDefineCompanyStep.officeAddresses,
+        offices: this.getOfficeAddresses,
         parties: this.fixOrgPeopleProperties(this.getAddPeopleAndRoleStep.orgPeople),
         shareStructure: {
           shareClasses: this.getCreateShareStructureStep.shareClasses
@@ -613,7 +614,7 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
           legalType: this.getEntityType
         },
         nameTranslations: this.getNameTranslations,
-        offices: this.getDefineCompanyStep.officeAddresses,
+        offices: this.getOfficeAddresses,
         contactPoint: {
           email: this.getBusinessContact.email || '',
           phone: this.getBusinessContact.phone || '',
@@ -630,7 +631,7 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
     switch (this.getEntityType) {
       case CorpTypeCd.COOP:
         filing.incorporationApplication.cooperative = {
-          cooperativeAssociationType: this.getDefineCompanyStep.cooperativeType,
+          cooperativeAssociationType: this.getCooperativeType,
           rulesFileKey: this.getCreateRulesStep.docKey || null,
           rulesFileName: this.getCreateRulesStep.rulesFile?.name || null,
           rulesFileSize: this.getCreateRulesStep.rulesFile?.size || null,
@@ -931,8 +932,8 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
         offices: {
           // only save records and registered office
           // do not save custodial office (if present)
-          recordsOffice: { ...this.getDefineCompanyStep.officeAddresses.recordsOffice },
-          registeredOffice: { ...this.getDefineCompanyStep.officeAddresses.registeredOffice }
+          recordsOffice: { ...this.getOfficeAddresses.recordsOffice },
+          registeredOffice: { ...this.getOfficeAddresses.registeredOffice }
         },
         parties: this.orgPersonsToParties(this.getAddPeopleAndRoleStep.orgPeople),
         relationships: this.getRestoration.relationships,
@@ -1010,7 +1011,7 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
     // save filing id
     this.setFilingId(+draftFiling.header.filingId)
 
-    // restore Business Address
+    // restore Business Addresses
     this.setRegistrationBusinessAddress(draftFiling.registration.offices?.businessOffice)
 
     // restore Business Type
@@ -1210,7 +1211,7 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
       dissolution: {
         dissolutionDate: this.getCurrentDate,
         affidavitConfirmed: this.getAffidavitStep.validationDetail.validationItemDetails[0]?.valid || false,
-        custodialOffice: this.getBusinessOfficeAddress,
+        custodialOffice: this.getCustodialOfficeAddress,
         dissolutionType: this.getDissolutionType,
         parties: [{
           ...this.getDissolutionCustodian,
@@ -1331,7 +1332,7 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
     this.setBusinessStartDate(draftFiling.business.startDate || this.getBusinessStartDate)
 
     // restore Dissolution data
-    this.setBusinessAddress(draftFiling.dissolution.custodialOffice)
+    this.setCustodialOfficeAddress(draftFiling.dissolution.custodialOffice)
     this.setDissolutionType(draftFiling.dissolution.dissolutionType)
 
     // dissolution statement only exists for COOPS

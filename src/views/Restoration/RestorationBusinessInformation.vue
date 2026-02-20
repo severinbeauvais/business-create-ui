@@ -27,7 +27,7 @@
       >
         <OfficeAddresses
           :showErrors="getShowErrors"
-          :inputAddresses="officeAddresses"
+          :inputAddresses="getOfficeAddresses"
           @update:addresses="setOfficeAddresses($event)"
           @valid="onAddressFormValidityChange($event)"
         />
@@ -39,7 +39,7 @@
         class="py-8 px-6"
       >
         <OfficeAddresses
-          :inputAddresses="officeAddresses"
+          :inputAddresses="getOfficeAddresses"
           :isEditing="false"
         />
       </v-card>
@@ -79,8 +79,7 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Getter, Action } from 'pinia-class'
 import { useStore } from '@/store/store'
-import { AddressIF, ContactPointIF, DefineCompanyIF, EmptyAddress, RegisteredRecordsAddressesIF,
-  RestorationStateIF } from '@/interfaces'
+import { AddressIF, ContactPointIF, EmptyAddress, RegisteredRecordsAddressesIF, RestorationStateIF } from '@/interfaces'
 import { CommonMixin } from '@/mixins'
 import { RestorationTypes, RouteNames } from '@/enums'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
@@ -95,7 +94,7 @@ import OfficeAddresses from '@/components/common/OfficeAddresses.vue'
 })
 export default class RestorationBusinessInformation extends Mixins(CommonMixin) {
   @Getter(useStore) getBusinessContact!: ContactPointIF
-  @Getter(useStore) getDefineCompanyStep!: DefineCompanyIF
+  @Getter(useStore) getOfficeAddresses!: RegisteredRecordsAddressesIF
   @Getter(useStore) getRestoration!: RestorationStateIF
   @Getter(useStore) getShowErrors!: boolean
   @Getter(useStore) isBaseCompany!: boolean
@@ -113,10 +112,6 @@ export default class RestorationBusinessInformation extends Mixins(CommonMixin) 
 
   // Enum for template
   readonly CorpTypeCd = CorpTypeCd
-
-  get officeAddresses (): RegisteredRecordsAddressesIF {
-    return this.getDefineCompanyStep.officeAddresses
-  }
 
   /** Called when component is created. */
   created (): void {
@@ -136,15 +131,15 @@ export default class RestorationBusinessInformation extends Mixins(CommonMixin) 
 
   get isEmptyRecordsAddress () : boolean {
     return (
-      this.isEmptyAddress(this.officeAddresses.recordsOffice?.mailingAddress) ||
-      this.isEmptyAddress(this.officeAddresses.recordsOffice?.deliveryAddress)
+      this.isEmptyAddress(this.getOfficeAddresses.recordsOffice?.mailingAddress) ||
+      this.isEmptyAddress(this.getOfficeAddresses.recordsOffice?.deliveryAddress)
     )
   }
 
   get isEmptyRegisteredAddress () : boolean {
     return (
-      this.isEmptyAddress(this.officeAddresses.registeredOffice?.mailingAddress) ||
-      this.isEmptyAddress(this.officeAddresses.registeredOffice?.deliveryAddress)
+      this.isEmptyAddress(this.getOfficeAddresses.registeredOffice?.mailingAddress) ||
+      this.isEmptyAddress(this.getOfficeAddresses.registeredOffice?.deliveryAddress)
     )
   }
 

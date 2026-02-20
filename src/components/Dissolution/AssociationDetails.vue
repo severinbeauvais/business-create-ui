@@ -32,53 +32,18 @@
 
     <v-divider class="mx-6" />
 
-    <!-- Address -->
+    <!-- Business/Office Addresses -->
     <article class="section-container">
-      <v-row no-gutters>
-        <v-col
-          cols="12"
-          sm="3"
-          class="pr-4"
-        >
-          <label id="address-label">{{ addressLabel }}</label>
-        </v-col>
-
-        <v-col
-          cols="12"
-          sm="4"
-          class="pr-4 pt-4 pt-sm-0"
-        >
-          <label class="mailing-address-header">Mailing Address</label>
-          <MailingAddress
-            v-if="!isEmptyAddress(getBusinessOfficeAddress.mailingAddress)"
-            :address="getBusinessOfficeAddress.mailingAddress"
-            :editing="false"
-          />
-          <div v-else>
-            (Not entered)
-          </div>
-        </v-col>
-
-        <v-col
-          cols="12"
-          sm="4"
-          class="pr-4 pt-4 pt-sm-0"
-        >
-          <label class="delivery-address-header">Delivery Address</label>
-          <DeliveryAddress
-            v-if="!isEmptyAddress(getBusinessOfficeAddress.deliveryAddress) &&
-              !isSame(getBusinessOfficeAddress.mailingAddress, getBusinessOfficeAddress.deliveryAddress, ['id'])"
-            :address="getBusinessOfficeAddress.deliveryAddress"
-            :editing="false"
-          />
-          <div v-else-if="isEmptyAddress(getBusinessOfficeAddress.deliveryAddress)">
-            (Not entered)
-          </div>
-          <div v-else>
-            Same as Mailing Address
-          </div>
-        </v-col>
-      </v-row>
+      <BusinessAddresses
+        v-if="isFirmDissolutionFiling"
+        id="business-addresses"
+      />
+      <OfficeAddresses
+        v-else
+        id="office-addresses"
+        :inputAddresses="getOfficeAddresses"
+        :isEditing="false"
+      />
     </article>
 
     <template v-if="showBusinessDate">
@@ -152,12 +117,11 @@ import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'pinia-class'
 import { useStore } from '@/store/store'
 import { AuthServices } from '@/services/'
-import { AddressIF, ContactPointIF, OfficeAddressIF } from '@/interfaces'
+import { ContactPointIF, RegisteredRecordsAddressesIF } from '@/interfaces'
 import { ContactInfo } from '@bcrs-shared-components/contact-info'
-import { BaseAddress } from '@bcrs-shared-components/base-address'
+import BusinessAddresses from '@/components/Dissolution/BusinessAddresses.vue'
 import OfficeAddresses from '@/components/common/OfficeAddresses.vue'
 import { CommonMixin, DateMixin } from '@/mixins'
-import { isEmpty } from 'lodash'
 import { CorpTypeCd, GetCorpFullDescription, GetCorpNumberedDescription }
   from '@bcrs-shared-components/corp-type-module'
 import { AuthorizedActions } from '@/enums'
@@ -165,10 +129,9 @@ import { IsAuthorized } from '@/utils'
 
 @Component({
   components: {
+    BusinessAddresses,
     ContactInfo,
-    OfficeAddresses,
-    DeliveryAddress: BaseAddress,
-    MailingAddress: BaseAddress
+    OfficeAddresses
   }
 })
 export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
@@ -177,7 +140,6 @@ export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
   readonly IsAuthorized = IsAuthorized
 
   @Prop({ default: false }) readonly isSummary!: boolean
-  @Prop({ default: 'Address' }) readonly addressLabel!: string
   @Prop({ default: 'Company' }) readonly entityLabel!: string
   @Prop({ default: false }) readonly showBusinessDate!: boolean
   @Prop({ default: true }) readonly showContactInfo!: boolean
@@ -186,10 +148,11 @@ export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
   @Getter(useStore) getBusinessContact!: ContactPointIF
   @Getter(useStore) getBusinessId!: string
   @Getter(useStore) getBusinessLegalName!: string
-  @Getter(useStore) getBusinessOfficeAddress!: OfficeAddressIF
   @Getter(useStore) getBusinessStartDate!: string
   @Getter(useStore) getEntityType!: CorpTypeCd
   @Getter(useStore) getFolioNumber!: string
+  @Getter(useStore) getOfficeAddresses!: RegisteredRecordsAddressesIF
+  @Getter(useStore) isFirmDissolutionFiling!: boolean
 
   // Global setters
   @Action(useStore) setBusinessContact!: (x: ContactPointIF) => void
@@ -213,11 +176,6 @@ export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
     return this.yyyyMmDdToPacificDate(this.getBusinessStartDate, true)
   }
 
-  /** Whether the address object is empty. */
-  isEmptyAddress (address: AddressIF): boolean {
-    return isEmpty(address)
-  }
-
   /** Event handler for contact information changes. */
   async onContactInfoChange (event: ContactPointIF): Promise<void> {
     // temporarily ignore data changes
@@ -237,11 +195,6 @@ export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-
-.mailing-address-header,
-.delivery-address-header {
-  font-size: $px-14;
-}
 
 #company-name {
   font-size: $px-22;

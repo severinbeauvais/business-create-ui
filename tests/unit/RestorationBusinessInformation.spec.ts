@@ -45,7 +45,7 @@ for (const test of restorationBusinessInfo) {
     let wrapper: any
 
     beforeAll(() => {
-      store.getDefineCompanyStep.officeAddresses = {
+      store.stateModel.defineCompanyStep.officeAddresses = {
         registeredOffice: {
           deliveryAddress: {
             streetAddress: 'delivery_address - address line one',

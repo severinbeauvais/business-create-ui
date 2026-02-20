@@ -171,7 +171,7 @@
       <!-- Registered Office / Records Office -->
       <article class="section-container">
         <OfficeAddresses
-          :inputAddresses="getDefineCompanyStep.officeAddresses"
+          :inputAddresses="getOfficeAddresses"
           :isEditing="false"
         />
       </article>
@@ -206,7 +206,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter } from 'pinia-class'
 import { useStore } from '@/store/store'
-import { ContactPointIF, DefineCompanyIF, NameTranslationIF } from '@/interfaces'
+import { ContactPointIF, NameTranslationIF, RegisteredRecordsAddressesIF } from '@/interfaces'
 import BusinessContactInfo from './BusinessContactInfo.vue'
 import FolioNumber from './FolioNumber.vue'
 import OfficeAddresses from './OfficeAddresses.vue'
@@ -230,11 +230,11 @@ export default class SummaryDefineCompany extends Vue {
   // Getters
   @Getter(useStore) getBusinessContact!: ContactPointIF
   @Getter(useStore) getCooperativeType!: CoopTypes
-  @Getter(useStore) getDefineCompanyStep!: DefineCompanyIF
   @Getter(useStore) getEntityType!: CorpTypeCd
   @Getter(useStore) getFolioNumber!: string
   @Getter(useStore) getNameRequestApprovedName!: string
   @Getter(useStore) getNameTranslations!: NameTranslationIF[]
+  @Getter(useStore) getOfficeAddresses!: RegisteredRecordsAddressesIF
   @Getter(useStore) isAmalgamationFiling!: boolean
   @Getter(useStore) isAmalgamationFilingHorizontal!: boolean
   @Getter(useStore) isAmalgamationFilingRegular!: boolean
