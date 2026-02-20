@@ -114,7 +114,6 @@ import { useStore } from '@/store/store'
 import { AuthServices } from '@/services/'
 import { ContactPointIF, RegisteredRecordsAddressesIF } from '@/interfaces'
 import { ContactInfo } from '@bcrs-shared-components/contact-info'
-import { BaseAddress } from '@bcrs-shared-components/base-address'
 import OfficeAddresses from '@/components/common/OfficeAddresses.vue'
 import { CommonMixin, DateMixin } from '@/mixins'
 import { CorpTypeCd, GetCorpFullDescription, GetCorpNumberedDescription }
@@ -125,9 +124,7 @@ import { IsAuthorized } from '@/utils'
 @Component({
   components: {
     ContactInfo,
-    OfficeAddresses,
-    DeliveryAddress: BaseAddress,
-    MailingAddress: BaseAddress
+    OfficeAddresses
   }
 })
 export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
