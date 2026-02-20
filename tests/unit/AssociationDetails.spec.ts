@@ -40,9 +40,7 @@ describe('Association Details component for firms', () => {
     expect(wrapper.find('#company-name').text()).toBe('My Alternate Name')
     expect(wrapper.find('#entity-description').text()).toBe('BC Sole Proprietorship')
     expect(wrapper.find('#business-id').text()).toBe('FM1234567')
-    expect(wrapper.find('#address-label').text()).toBe('Business Address')
-    expect(wrapper.find('.mailing-address-header').text()).toBe('Mailing Address')
-    expect(wrapper.find('.delivery-address-header').text()).toBe('Delivery Address')
+    expect(wrapper.find('#office-addresses').exists()).toBe(true)
 
     wrapper.destroy()
   })
@@ -76,9 +74,7 @@ describe('Association Details component for firms', () => {
     expect(wrapper.find('#company-name').text()).toBe('My Legal Name')
     expect(wrapper.find('#entity-description').text()).toBe('BC Sole Proprietorship')
     expect(wrapper.find('#business-id').text()).toBe('FM1234567')
-    expect(wrapper.find('#address-label').text()).toBe('Business Address')
-    expect(wrapper.find('.mailing-address-header').text()).toBe('Mailing Address')
-    expect(wrapper.find('.delivery-address-header').text()).toBe('Delivery Address')
+    expect(wrapper.find('#office-addresses').exists()).toBe(true)
 
     wrapper.destroy()
   })

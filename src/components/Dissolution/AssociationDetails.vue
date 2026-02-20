@@ -32,53 +32,13 @@
 
     <v-divider class="mx-6" />
 
-    <!-- Address -->
+    <!-- Office Addresses -->
     <article class="section-container">
-      <v-row no-gutters>
-        <v-col
-          cols="12"
-          sm="3"
-          class="pr-4"
-        >
-          <label id="address-label">{{ addressLabel }}</label>
-        </v-col>
-
-        <v-col
-          cols="12"
-          sm="4"
-          class="pr-4 pt-4 pt-sm-0"
-        >
-          <label class="mailing-address-header">Mailing Address</label>
-          <MailingAddress
-            v-if="!isEmptyAddress(getBusinessOfficeAddress.mailingAddress)"
-            :address="getBusinessOfficeAddress.mailingAddress"
-            :editing="false"
-          />
-          <div v-else>
-            (Not entered)
-          </div>
-        </v-col>
-
-        <v-col
-          cols="12"
-          sm="4"
-          class="pr-4 pt-4 pt-sm-0"
-        >
-          <label class="delivery-address-header">Delivery Address</label>
-          <DeliveryAddress
-            v-if="!isEmptyAddress(getBusinessOfficeAddress.deliveryAddress) &&
-              !isSame(getBusinessOfficeAddress.mailingAddress, getBusinessOfficeAddress.deliveryAddress, ['id'])"
-            :address="getBusinessOfficeAddress.deliveryAddress"
-            :editing="false"
-          />
-          <div v-else-if="isEmptyAddress(getBusinessOfficeAddress.deliveryAddress)">
-            (Not entered)
-          </div>
-          <div v-else>
-            Same as Mailing Address
-          </div>
-        </v-col>
-      </v-row>
+      <OfficeAddresses
+        id="office-addresses"
+        :inputAddresses="getDefineCompanyStep.officeAddresses"
+        :isEditing="false"
+      />
     </article>
 
     <template v-if="showBusinessDate">
@@ -152,12 +112,11 @@ import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'pinia-class'
 import { useStore } from '@/store/store'
 import { AuthServices } from '@/services/'
-import { AddressIF, ContactPointIF, OfficeAddressIF } from '@/interfaces'
+import { ContactPointIF, DefineCompanyIF } from '@/interfaces'
 import { ContactInfo } from '@bcrs-shared-components/contact-info'
 import { BaseAddress } from '@bcrs-shared-components/base-address'
 import OfficeAddresses from '@/components/common/OfficeAddresses.vue'
 import { CommonMixin, DateMixin } from '@/mixins'
-import { isEmpty } from 'lodash'
 import { CorpTypeCd, GetCorpFullDescription, GetCorpNumberedDescription }
   from '@bcrs-shared-components/corp-type-module'
 import { AuthorizedActions } from '@/enums'
@@ -186,8 +145,8 @@ export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
   @Getter(useStore) getBusinessContact!: ContactPointIF
   @Getter(useStore) getBusinessId!: string
   @Getter(useStore) getBusinessLegalName!: string
-  @Getter(useStore) getBusinessOfficeAddress!: OfficeAddressIF
   @Getter(useStore) getBusinessStartDate!: string
+  @Getter(useStore) getDefineCompanyStep!: DefineCompanyIF
   @Getter(useStore) getEntityType!: CorpTypeCd
   @Getter(useStore) getFolioNumber!: string
 
@@ -213,11 +172,6 @@ export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
     return this.yyyyMmDdToPacificDate(this.getBusinessStartDate, true)
   }
 
-  /** Whether the address object is empty. */
-  isEmptyAddress (address: AddressIF): boolean {
-    return isEmpty(address)
-  }
-
   /** Event handler for contact information changes. */
   async onContactInfoChange (event: ContactPointIF): Promise<void> {
     // temporarily ignore data changes
@@ -237,11 +191,6 @@ export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
-
-.mailing-address-header,
-.delivery-address-header {
-  font-size: $px-14;
-}
 
 #company-name {
   font-size: $px-22;

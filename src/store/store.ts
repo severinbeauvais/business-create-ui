@@ -405,8 +405,8 @@ export const useStore = defineStore('store', {
       return this.stateModel.business.startDate
     },
 
-    /** The Business Office Address. */
-    getBusinessOfficeAddress (): OfficeAddressIF {
+    /** The Business Office Address (aka Custodial Address). */
+    getCustodialOfficeAddress (): OfficeAddressIF {
       return this.stateModel.business.officeAddress
     },
 
@@ -448,6 +448,10 @@ export const useStore = defineStore('store', {
     /** The Cooperative association type. */
     getCooperativeType (): CoopTypes {
       return this.getDefineCompanyStep.cooperativeType
+    },
+
+    getOfficeAddresses (): RegisteredRecordsAddressesIF {
+      return this.stateModel.defineCompanyStep.officeAddresses
     },
 
     /** The Business Contact object. */
@@ -1145,7 +1149,7 @@ export const useStore = defineStore('store', {
     setBusinessId (businessId: string) {
       this.stateModel.business.businessId = businessId
     },
-    setBusinessAddress (address: OfficeAddressIF) {
+    setCustodialOfficeAddress (address: OfficeAddressIF) {
       this.stateModel.business.officeAddress = address
     },
     setBusinessStartDate (startDate: string) {

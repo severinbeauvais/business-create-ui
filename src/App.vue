@@ -824,8 +824,8 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
         await this.loadPartiesInformation(this.getBusinessId)
       }
 
-      // load office addresses only for restorations
-      if (this.isRestorationFiling) {
+      // load office addresses only for restorations and voluntary dissolutions
+      if (this.isRestorationFiling || this.isOtherDissolutionFiling) {
         await this.loadOfficeAddresses(this.getBusinessId)
       }
 
@@ -1390,16 +1390,16 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
     }
   }
 
-  /**
-   * Loads office addresses.
-   * (This method is only called for restorations.)
-   */
+  /** Fetches and stores office addresses. */
   private async loadOfficeAddresses (businessId: string): Promise<void> {
     // NB: will throw if API error
     const addresses = await LegalServices.fetchAddresses(businessId)
 
     if (addresses) {
       this.setOfficeAddresses(addresses)
+    } else {
+      // do not throw error -- empty addresses are OK
+      console.info('Empty office addresses') // eslint-disable-line no-console
     }
   }
 

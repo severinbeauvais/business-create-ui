@@ -33,7 +33,7 @@ export interface BusinessIF {
   lastModified: ApiDateTimeUtc // not used
   legalName: string
   legalType: CorpTypeCd
-  officeAddress: OfficeAddressIF
+  officeAddress: OfficeAddressIF // custodial address
   nextAnnualReport: ApiDateTimeUtc // used for BCOMP only
   startDate: ApiDateTimeUtc
   state: EntityStates
