@@ -1011,7 +1011,7 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
     // save filing id
     this.setFilingId(+draftFiling.header.filingId)
 
-    // restore Business Address
+    // restore Business Addresses
     this.setRegistrationBusinessAddress(draftFiling.registration.offices?.businessOffice)
 
     // restore Business Type

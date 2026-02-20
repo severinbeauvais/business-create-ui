@@ -11,7 +11,7 @@ const vuetify = new Vuetify({})
 setActivePinia(createPinia())
 const store = useStore()
 
-describe.skip('Business Address delivery address <same as> is unchecked by default', () => {
+describe.skip('Business Addresses delivery address <same as> is unchecked by default', () => {
   let wrapper: any
 
   const BUSINESS_ADDRESSES = {

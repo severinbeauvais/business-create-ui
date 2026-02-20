@@ -6,7 +6,7 @@
         sm="3"
         class="pr-4"
       >
-        <label id="address-label">Business Address</label>
+        <label id="address-label">Business Addresses</label>
       </v-col>
 
       <v-col
