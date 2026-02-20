@@ -32,9 +32,14 @@
 
     <v-divider class="mx-6" />
 
-    <!-- Office Addresses -->
+    <!-- Business/Office Addresses -->
     <article class="section-container">
+      <BusinessAddresses
+        v-if="isFirmDissolutionFiling"
+        id="business-addresses"
+      />
       <OfficeAddresses
+        v-else
         id="office-addresses"
         :inputAddresses="getOfficeAddresses"
         :isEditing="false"
@@ -114,6 +119,7 @@ import { useStore } from '@/store/store'
 import { AuthServices } from '@/services/'
 import { ContactPointIF, RegisteredRecordsAddressesIF } from '@/interfaces'
 import { ContactInfo } from '@bcrs-shared-components/contact-info'
+import BusinessAddresses from '@/components/Dissolution/BusinessAddresses.vue'
 import OfficeAddresses from '@/components/common/OfficeAddresses.vue'
 import { CommonMixin, DateMixin } from '@/mixins'
 import { CorpTypeCd, GetCorpFullDescription, GetCorpNumberedDescription }
@@ -123,6 +129,7 @@ import { IsAuthorized } from '@/utils'
 
 @Component({
   components: {
+    BusinessAddresses,
     ContactInfo,
     OfficeAddresses
   }
@@ -133,7 +140,6 @@ export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
   readonly IsAuthorized = IsAuthorized
 
   @Prop({ default: false }) readonly isSummary!: boolean
-  @Prop({ default: 'Address' }) readonly addressLabel!: string
   @Prop({ default: 'Company' }) readonly entityLabel!: string
   @Prop({ default: false }) readonly showBusinessDate!: boolean
   @Prop({ default: true }) readonly showContactInfo!: boolean
@@ -146,6 +152,7 @@ export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
   @Getter(useStore) getEntityType!: CorpTypeCd
   @Getter(useStore) getFolioNumber!: string
   @Getter(useStore) getOfficeAddresses!: RegisteredRecordsAddressesIF
+  @Getter(useStore) isFirmDissolutionFiling!: boolean
 
   // Global setters
   @Action(useStore) setBusinessContact!: (x: ContactPointIF) => void

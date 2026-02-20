@@ -1,6 +1,6 @@
 import { shallowWrapperFactory } from '../vitest-wrapper-factory'
 import AssociationDetails from '@/components/Dissolution/AssociationDetails.vue'
-import { CorpTypeCd } from '@bcrs-shared-components/enums/'
+import { CorpTypeCd, FilingTypes } from '@bcrs-shared-components/enums/'
 import * as FeatureFlags from '@/utils/feature-flag-utils'
 
 // mock the entire module
@@ -20,7 +20,6 @@ describe('Association Details component for firms', () => {
       AssociationDetails,
       {
         entityLabel: 'Business',
-        addressLabel: 'Business Address',
         showContactInfo: false,
         showBusinessDate: true,
         isSummary: true
@@ -32,7 +31,11 @@ describe('Association Details component for firms', () => {
           officeAddress: {}
         },
         entityType: CorpTypeCd.SOLE_PROP,
-        alternateName: 'My Alternate Name'
+        alternateName: 'My Alternate Name',
+        tombstone: {
+          authorizedActions: [],
+          filingType: FilingTypes.DISSOLUTION
+        }
       }
     )
 
@@ -40,7 +43,7 @@ describe('Association Details component for firms', () => {
     expect(wrapper.find('#company-name').text()).toBe('My Alternate Name')
     expect(wrapper.find('#entity-description').text()).toBe('BC Sole Proprietorship')
     expect(wrapper.find('#business-id').text()).toBe('FM1234567')
-    expect(wrapper.find('#office-addresses').exists()).toBe(true)
+    expect(wrapper.find('#business-addresses').exists()).toBe(true)
 
     wrapper.destroy()
   })
@@ -54,7 +57,6 @@ describe('Association Details component for firms', () => {
       AssociationDetails,
       {
         entityLabel: 'Business',
-        addressLabel: 'Business Address',
         showContactInfo: false,
         showBusinessDate: true,
         isSummary: true
@@ -66,7 +68,11 @@ describe('Association Details component for firms', () => {
           officeAddress: {}
         },
         entityType: CorpTypeCd.SOLE_PROP,
-        alternateName: 'My Alternate Name'
+        alternateName: 'My Alternate Name',
+        tombstone: {
+          authorizedActions: [],
+          filingType: FilingTypes.DISSOLUTION
+        }
       }
     )
 
@@ -74,7 +80,7 @@ describe('Association Details component for firms', () => {
     expect(wrapper.find('#company-name').text()).toBe('My Legal Name')
     expect(wrapper.find('#entity-description').text()).toBe('BC Sole Proprietorship')
     expect(wrapper.find('#business-id').text()).toBe('FM1234567')
-    expect(wrapper.find('#office-addresses').exists()).toBe(true)
+    expect(wrapper.find('#business-addresses').exists()).toBe(true)
 
     wrapper.destroy()
   })

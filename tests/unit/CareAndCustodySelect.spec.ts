@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import { wrapperFactory } from '../vitest-wrapper-factory'
 import CareAndCustodySelect from '@/components/Dissolution/CareAndCustodySelect.vue'
 import { DissolutionResources } from '@/resources'
@@ -65,7 +64,8 @@ for (const mock of custodianTestCases) {
 
       const custodianRadioBtn = wrapper.find('#liquidator-radio-btn')
       custodianRadioBtn.trigger('click')
-      await Vue.nextTick()
+      // wait for all components to update
+      await flushPromises()
 
       // Verify new model state
       expect(wrapper.vm.liquidatorOrCustodian).toBe(RoleTypes.LIQUIDATOR)

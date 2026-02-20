@@ -36,7 +36,6 @@
           <section>
             <AssociationDetails
               entityLabel="Business"
-              addressLabel="Business Address"
               :showContactInfo="false"
               :showBusinessDate="true"
               :isSummary="true"
