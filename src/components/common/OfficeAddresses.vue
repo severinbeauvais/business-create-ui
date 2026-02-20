@@ -325,7 +325,7 @@ import { Getter } from 'pinia-class'
 import { useStore } from '@/store/store'
 import { OfficeAddressSchema } from '@/schemas'
 import { BaseAddress } from '@bcrs-shared-components/base-address'
-import { AddressIF, DefineCompanyIF, EmptyAddress, RegisteredRecordsAddressesIF } from '@/interfaces'
+import { AddressIF, EmptyAddress, RegisteredRecordsAddressesIF } from '@/interfaces'
 import { CommonMixin } from '@/mixins'
 
 @Component({
@@ -356,7 +356,7 @@ export default class OfficeAddresses extends Mixins(CommonMixin) {
 
   @Prop({ default: false }) readonly showErrors!: boolean
 
-  @Getter(useStore) getDefineCompanyStep!: DefineCompanyIF
+  @Getter(useStore) getOfficeAddresses!: RegisteredRecordsAddressesIF
   @Getter(useStore) isBaseCompany!: boolean
   @Getter(useStore) isEntityCoop!: boolean
 
@@ -588,7 +588,7 @@ export default class OfficeAddresses extends Mixins(CommonMixin) {
     this.emitValid()
   }
 
-  @Watch('getDefineCompanyStep.officeAddresses', { deep: true, immediate: true })
+  @Watch('getOfficeAddresses', { deep: true, immediate: true })
   private updateAddresses (): void {
     this.addresses = this.inputAddresses
     this.setAddresses(false)

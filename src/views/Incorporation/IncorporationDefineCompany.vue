@@ -109,7 +109,7 @@
       <div :class="{ 'invalid-section': getShowErrors && !addressFormValid }">
         <OfficeAddresses
           :showErrors="getShowErrors"
-          :inputAddresses="addresses"
+          :inputAddresses="getOfficeAddresses"
           @update:addresses="setOfficeAddresses($event)"
           @valid="onOfficeAddressesValid($event)"
         />
@@ -175,7 +175,7 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Getter, Action } from 'pinia-class'
 import { useStore } from '@/store/store'
-import { AddressIF, ContactPointIF, DefineCompanyIF, RegisteredRecordsAddressesIF } from '@/interfaces'
+import { AddressIF, ContactPointIF, RegisteredRecordsAddressesIF } from '@/interfaces'
 import { CommonMixin } from '@/mixins'
 import { AuthorizedActions, CoopTypes, RouteNames } from '@/enums'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
@@ -204,9 +204,9 @@ export default class IncorporationDefineCompany extends Mixins(CommonMixin) {
   readonly IsAuthorized = IsAuthorized
 
   @Getter(useStore) getBusinessContact!: ContactPointIF
-  @Getter(useStore) getDefineCompanyStep!: DefineCompanyIF
   @Getter(useStore) getFolioNumber!: string
   @Getter(useStore) getNameTranslationsValid!: boolean
+  @Getter(useStore) getOfficeAddresses!: RegisteredRecordsAddressesIF
   @Getter(useStore) getShowErrors!: boolean
   @Getter(useStore) isBaseCompany!: boolean
   @Getter(useStore) isEntityCoop!: boolean
@@ -242,17 +242,13 @@ export default class IncorporationDefineCompany extends Mixins(CommonMixin) {
     }
   }
 
-  get addresses (): RegisteredRecordsAddressesIF {
-    return this.getDefineCompanyStep.officeAddresses
-  }
-
   /** Called when component is created. */
   created (): void {
     // temporarily ignore data changes
     this.setIgnoreChanges(true)
 
     // if no addresses were fetched, set default addresses
-    if (!this.addresses.registeredOffice && !this.addresses.recordsOffice) {
+    if (!this.getOfficeAddresses.registeredOffice && !this.getOfficeAddresses.recordsOffice) {
       this.setDefaultAddresses()
     }
 

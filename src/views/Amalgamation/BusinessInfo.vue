@@ -23,7 +23,7 @@
       <template v-if="isAmalgamationFilingRegular">
         <OfficeAddresses
           :showErrors="getShowErrors"
-          :inputAddresses="addresses"
+          :inputAddresses="getOfficeAddresses"
           @update:addresses="setOfficeAddresses($event)"
           @valid="onOfficeAddressesValid($event)"
         />
@@ -45,7 +45,7 @@
           <CardHeader label="Addresses" />
           <article class="section-container">
             <OfficeAddresses
-              :inputAddresses="addresses"
+              :inputAddresses="getOfficeAddresses"
               :isEditing="false"
               @valid="onOfficeAddressesValid($event)"
             />
@@ -98,12 +98,7 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Getter, Action } from 'pinia-class'
 import { useStore } from '@/store/store'
-import {
-  AddressIF,
-  ContactPointIF,
-  DefineCompanyIF,
-  RegisteredRecordsAddressesIF
-} from '@/interfaces'
+import { AddressIF, ContactPointIF, RegisteredRecordsAddressesIF } from '@/interfaces'
 import { CommonMixin } from '@/mixins'
 import { RouteNames } from '@/enums'
 import BusinessContactInfo from '@/components/common/BusinessContactInfo.vue'
@@ -123,7 +118,7 @@ import MessageBox from '@/components/common/MessageBox.vue'
 })
 export default class AmalgamationBusinessInfo extends Mixins(CommonMixin) {
   @Getter(useStore) getBusinessContact!: ContactPointIF
-  @Getter(useStore) getDefineCompanyStep!: DefineCompanyIF
+  @Getter(useStore) getOfficeAddresses!: RegisteredRecordsAddressesIF
   @Getter(useStore) getShowErrors!: boolean
   @Getter(useStore) isAmalgamationFilingHorizontal!: boolean
   @Getter(useStore) isAmalgamationFilingRegular!: boolean
@@ -152,17 +147,13 @@ export default class AmalgamationBusinessInfo extends Mixins(CommonMixin) {
     }
   }
 
-  get addresses (): RegisteredRecordsAddressesIF {
-    return this.getDefineCompanyStep.officeAddresses
-  }
-
   /** Called when component is created. */
   created (): void {
     // ignore data changes while page loads
     this.setIgnoreChanges(true)
 
     // if no addresses were fetched, set default addresses
-    if (!this.addresses.registeredOffice && !this.addresses.recordsOffice) {
+    if (!this.getOfficeAddresses.registeredOffice && !this.getOfficeAddresses.recordsOffice) {
       this.setDefaultAddresses()
     }
 

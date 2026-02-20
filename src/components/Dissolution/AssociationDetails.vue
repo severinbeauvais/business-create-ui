@@ -36,7 +36,7 @@
     <article class="section-container">
       <OfficeAddresses
         id="office-addresses"
-        :inputAddresses="getDefineCompanyStep.officeAddresses"
+        :inputAddresses="getOfficeAddresses"
         :isEditing="false"
       />
     </article>
@@ -112,7 +112,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'pinia-class'
 import { useStore } from '@/store/store'
 import { AuthServices } from '@/services/'
-import { ContactPointIF, DefineCompanyIF } from '@/interfaces'
+import { ContactPointIF, RegisteredRecordsAddressesIF } from '@/interfaces'
 import { ContactInfo } from '@bcrs-shared-components/contact-info'
 import { BaseAddress } from '@bcrs-shared-components/base-address'
 import OfficeAddresses from '@/components/common/OfficeAddresses.vue'
@@ -146,9 +146,9 @@ export default class AssociationDetails extends Mixins(CommonMixin, DateMixin) {
   @Getter(useStore) getBusinessId!: string
   @Getter(useStore) getBusinessLegalName!: string
   @Getter(useStore) getBusinessStartDate!: string
-  @Getter(useStore) getDefineCompanyStep!: DefineCompanyIF
   @Getter(useStore) getEntityType!: CorpTypeCd
   @Getter(useStore) getFolioNumber!: string
+  @Getter(useStore) getOfficeAddresses!: RegisteredRecordsAddressesIF
 
   // Global setters
   @Action(useStore) setBusinessContact!: (x: ContactPointIF) => void

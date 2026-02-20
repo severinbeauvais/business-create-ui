@@ -451,7 +451,7 @@ export const useStore = defineStore('store', {
     },
 
     getOfficeAddresses (): RegisteredRecordsAddressesIF {
-      return this.stateModel.defineCompanyStep.officeAddresses
+      return this.getDefineCompanyStep.officeAddresses
     },
 
     /** The Business Contact object. */
