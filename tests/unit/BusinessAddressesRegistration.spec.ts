@@ -74,7 +74,7 @@ describe.skip('Business Addresses delivery address <same as> is unchecked by def
   })
 })
 
-describe.skip('Business Addresses', () => {
+describe.skip('Business Addresses - Registration', () => {
   let wrapper: any
 
   const registeredOffice = {
@@ -435,6 +435,6 @@ describe('Business Addresses - Summary', () => {
   })
 
   it('displays the summary ui when in summary mode', () => {
-    expect(wrapper.vm.$el.querySelector('.summary-section')).toBeDefined()
+    expect(wrapper.find('.summary-section').exists()).toBe(true)
   })
 })

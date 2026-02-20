@@ -10,7 +10,7 @@ const vuetify = new Vuetify({})
 setActivePinia(createPinia())
 const store = useStore()
 
-describe('Business Addresses - Summary', () => {
+describe('Business Addresses - Dissolution', () => {
   let wrapper: any
 
   const custodialAddress = {
@@ -41,10 +41,6 @@ describe('Business Addresses - Summary', () => {
     // init store
     store.stateModel.registration.businessAddress = custodialAddress
     wrapper = mount(BusinessAddresses, {
-      propsData: {
-        isEditing: false,
-        showErrors: true
-      },
       localVue,
       vuetify
     })
@@ -54,7 +50,10 @@ describe('Business Addresses - Summary', () => {
     wrapper.destroy()
   })
 
-  it('displays the summary ui when in summary mode', () => {
-    expect(wrapper.vm.$el.querySelector('.summary-section')).toBeDefined()
+  it('displays the component correctly', () => {
+    expect(wrapper.find('#business-addresses').exists()).toBe(true)
+    expect(wrapper.find('#address-label').text()).toBe('Business Addresses')
+    expect(wrapper.find('.mailing-address-header').text()).toBe('Mailing Address')
+    expect(wrapper.find('.delivery-address-header').text()).toBe('Delivery Address')
   })
 })
