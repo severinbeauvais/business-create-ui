@@ -33,6 +33,11 @@
         </span>
       </div>
 
+      <pre>Number() = {{ Number(myParValue) }}</pre>
+      <pre>toString = {{ myParValue.toString() }}</pre>
+      <pre>toNumber = {{ myParValue.toNumber() }}</pre>
+      <pre>toJSON() = {{ myParValue.toJSON() }}</pre>
+
       <v-data-table
         :headers="headers"
         :items="shareClasses"
@@ -70,7 +75,7 @@
               {{ row.item.maxNumberOfShares ? (+row.item.maxNumberOfShares).toLocaleString() : 'No Maximum' }}
             </td>
             <td class="share-series-value">
-              {{ row.item.parValue ? row.item.parValue : 'No Par Value' }}
+              {{ parValueDisplay(row.item) }}
             </td>
             <td class="share-series-value">
               {{ row.item.currency }}
@@ -250,6 +255,7 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
+import Decimal from 'decimal.js'
 import { RouteNames } from '@/enums'
 import { arrayMoveMutable } from 'array-move'
 
@@ -280,6 +286,40 @@ export default class ListShareClass extends Vue {
     { text: 'Special Rights or Restrictions', value: 'hasRightsOrRestrictions', class: 'share-structure-header' },
     { text: '', value: 'actions' }
   ]
+
+  // myParValue = new Decimal('1234567890.0987654321') // 20 significant digits
+  myParValue = new Decimal('0.0021450560850677619') // 15 significant digits (not including trailing zeros)
+  // myParValue = new Decimal('12345678.00000000000000000001') //
+
+  parValueDisplay (item: any): string {
+    if (!item.parValue) return 'No Par Value'
+
+    // return Intl.NumberFormat('en-US',
+    //   { style: 'currency', currency: item.currency, currencyDisplay: 'narrowSymbol' }
+    // ).format(item.parValue)
+
+    // display some currencies with 2 decimal places
+    if (['AUD', 'CAD', 'USD'].includes(item.currency)) {
+      return '$' + formatWithMinTwoDecimals(item.parValue)
+    }
+
+    return item.parValue.toString()
+
+    function formatWithMinTwoDecimals (value: number): string {
+      if (Number.isInteger(value)) {
+        return (value >= 1e6) ? value.toFixed(0) : value.toFixed(2)
+      }
+
+      // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+      const [int, dec] = value.toString().split('.')
+
+      // eg, 1.25, 12.5
+      if (dec && dec.length <= 2) return value.toFixed(2)
+
+      // eg, 1e37
+      return value.toString()
+    }
+  }
 
   /**
    * Adjust the priority of the list share class

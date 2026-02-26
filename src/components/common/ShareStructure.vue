@@ -295,9 +295,9 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
       return [
         v => (v !== '' && v !== null && v !== undefined) || 'Par value is required',
         v => v > 0 || 'Amount must be greater than 0',
-        v => (v < 1)
-          ? (/^\d+(\.\d{0,6})?$/.test(v) || 'Amounts less than 1 can be entered with up to 6 decimal places')
-          : (/^\d+(\.\d{1,2})?$/.test(v) || 'Amounts greater than 1 can be entered with up to 2 decimal places')
+        // v => (v < 1)
+        //   ? (/^\d+(\.\d{0,6})?$/.test(v) || 'Amounts less than 1 can be entered with up to 6 decimal places')
+        //   : (/^\d+(\.\d{1,2})?$/.test(v) || 'Amounts greater than 1 can be entered with up to 2 decimal places')
       ]
     }
     return []
