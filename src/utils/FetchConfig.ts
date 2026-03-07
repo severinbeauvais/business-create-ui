@@ -1,4 +1,4 @@
-import { AxiosInstance as axios, GetFeatureFlag } from '@/utils'
+import { AxiosInstance as axios } from '@/utils'
 
 /**
  * Fetches config from environment and sets items in session storage or window object.
@@ -32,20 +32,11 @@ export function FetchConfig (): void {
   const businessDashUrl: string = import.meta.env.VUE_APP_BUSINESS_DASH_URL
   sessionStorage.setItem('BUSINESS_DASH_URL', businessDashUrl)
 
-  // set Legal API URL or Business API GW URL depending on FF
-  if (GetFeatureFlag('use-business-api-gw-url')) {
-    const businessApiGwUrl: string =
-      (import.meta.env.VUE_APP_BUSINESS_API_GW_URL + import.meta.env.VUE_APP_BUSINESS_API_VERSION_2 + '/')
-    sessionStorage.setItem('BUSINESS_API_GW_URL', businessApiGwUrl)
-    // set base URL for axios calls
-    axios.defaults.baseURL = businessApiGwUrl
-  } else {
-    const legalApiUrl: string =
-      (import.meta.env.VUE_APP_LEGAL_API_URL + import.meta.env.VUE_APP_LEGAL_API_VERSION_2 + '/')
-    sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
-    // set base URL for axios calls
-    axios.defaults.baseURL = legalApiUrl
-  }
+  const businessApiUrl: string =
+    (import.meta.env.VUE_APP_BUSINESS_API_GW_URL + import.meta.env.VUE_APP_BUSINESS_API_VERSION_2 + '/')
+  sessionStorage.setItem('BUSINESS_API_URL', businessApiUrl)
+  // set base URL for axios calls
+  axios.defaults.baseURL = businessApiUrl
 
   const naicsUrl: string = (import.meta.env.VUE_APP_NAICS_API_URL + import.meta.env.VUE_APP_NAICS_API_VERSION_2 + '/')
   sessionStorage.setItem('NAICS_URL', naicsUrl)
@@ -54,25 +45,15 @@ export function FetchConfig (): void {
     (import.meta.env.VUE_APP_REGISTRIES_SEARCH_API_URL + import.meta.env.VUE_APP_REGISTRIES_SEARCH_API_VERSION + '/')
   sessionStorage.setItem('REGISTRIES_SEARCH_API_URL', registriesSearchApiUrl)
 
-  // WARNING: AUTH_API_URL is needed for SbcHeader common component to load CURRENT_ACCOUNT object into session storage
-  // FUTURE: SBC Header component should use Auth API GW URL
-  const authApiUrl: string = (import.meta.env.VUE_APP_AUTH_API_URL + import.meta.env.VUE_APP_AUTH_API_VERSION + '/')
-  sessionStorage.setItem('AUTH_API_URL', authApiUrl)
-
-  const authApiGwUrl: string =
+  const authApiUrl: string =
     (import.meta.env.VUE_APP_AUTH_API_GW_URL + import.meta.env.VUE_APP_AUTH_API_VERSION + '/')
-  sessionStorage.setItem('AUTH_API_GW_URL', authApiGwUrl)
+  sessionStorage.setItem('AUTH_API_URL', authApiUrl)
 
   const colinApiUrl: string = (import.meta.env.VUE_APP_COLIN_API_URL + import.meta.env.VUE_APP_COLIN_API_VERSION + '/')
   sessionStorage.setItem('COLIN_API_URL', colinApiUrl)
 
-  // WARNING: PAY_API_URL is needed for SbcFeeSummary common component to fetch fees
-  // FUTURE: Fee Summary component should use Pay API GW URL
-  const payApiUrl: string = (import.meta.env.VUE_APP_PAY_API_URL + import.meta.env.VUE_APP_PAY_API_VERSION + '/')
+  const payApiUrl: string = (import.meta.env.VUE_APP_PAY_API_GW_URL + import.meta.env.VUE_APP_PAY_API_VERSION + '/')
   sessionStorage.setItem('PAY_API_URL', payApiUrl)
-
-  const payApiGwUrl: string = (import.meta.env.VUE_APP_PAY_API_GW_URL + import.meta.env.VUE_APP_PAY_API_VERSION + '/')
-  sessionStorage.setItem('PAY_API_GW_URL', payApiGwUrl)
 
   // for system alert banner (sbc-common-components)
   const statusApiUrl: string = (import.meta.env.VUE_APP_STATUS_API_URL + import.meta.env.VUE_APP_STATUS_API_VERSION)

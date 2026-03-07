@@ -1,4 +1,4 @@
-import { AxiosInstance as axios, GetFeatureFlag } from '@/utils'
+import { AxiosInstance as axios } from '@/utils'
 import { AxiosResponse } from 'axios'
 import { StatusCodes } from 'http-status-codes'
 import { BusinessIF, DissolutionFilingIF, IncorporationFilingIF, NameRequestIF, OrgPersonIF, PresignedUrlIF,
@@ -10,11 +10,9 @@ import { ShareStructureIF } from '@bcrs-shared-components/interfaces'
  * Class that provides integration with the Legal (aka Business) API.
  */
 export default class LegalServices {
-  /** The Legal API URL or Business API Gateway URL, depending on the FF. */
+  /** The Business API Gateway URL. */
   static get legalBusinessUrl (): string {
-    return GetFeatureFlag('use-business-api-gw-url')
-      ? sessionStorage.getItem('BUSINESS_API_GW_URL')
-      : sessionStorage.getItem('LEGAL_API_URL')
+    return sessionStorage.getItem('BUSINESS_API_URL')
   }
 
   /**

@@ -1,16 +1,9 @@
 import sinon from 'sinon'
 import LegalServices from '@/services/legal-services'
-import * as FeatureFlags from '@/utils/feature-flag-utils'
 import { AxiosInstance as axios } from '@/utils'
 
 // Populate session variables
-sessionStorage.setItem('BUSINESS_API_GW_URL', 'https://business-api-gw.url/')
-
-// Mock feature flag
-vi.spyOn(FeatureFlags, 'GetFeatureFlag').mockImplementation(flag => {
-  if (flag === 'use-business-api-gw-url') return true
-  return null
-})
+sessionStorage.setItem('BUSINESS_API_URL', 'https://business-api.url/')
 
 describe('Legal Services', () => {
   it.skip('fetches the filings list', async () => {
@@ -19,7 +12,7 @@ describe('Legal Services', () => {
 
   it('fetches the only filing', async () => {
     // mock single item response
-    sinon.stub(axios, 'get').withArgs('https://business-api-gw.url/businesses/123/filings')
+    sinon.stub(axios, 'get').withArgs('https://business-api.url/businesses/123/filings')
       .resolves({
         data: {
           filing: {
@@ -52,7 +45,7 @@ describe('Legal Services', () => {
 
   it('fetches the first filing', async () => {
     // mock list response
-    sinon.stub(axios, 'get').withArgs('https://business-api-gw.url/businesses/123/filings')
+    sinon.stub(axios, 'get').withArgs('https://business-api.url/businesses/123/filings')
       .resolves({
         data: {
           filings: [
@@ -103,7 +96,7 @@ describe('Legal Services', () => {
 
   it('fetches resolutions', async () => {
     // mock list response
-    sinon.stub(axios, 'get').withArgs('https://business-api-gw.url/businesses/123/resolutions')
+    sinon.stub(axios, 'get').withArgs('https://business-api.url/businesses/123/resolutions')
       .resolves({
         data: {
           resolutions: [

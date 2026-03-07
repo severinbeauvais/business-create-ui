@@ -9,7 +9,7 @@ import { FeesIF } from '@/interfaces'
 export default class PayServices {
   /** The Pay API Gateway URL. */
   static get payApiGwUrl (): string {
-    return sessionStorage.getItem('PAY_API_GW_URL')
+    return sessionStorage.getItem('PAY_API_URL')
   }
 
   /**

@@ -12,16 +12,16 @@ function getAccountId (): string {
   return JSON.parse(currentAccount)?.id || null
 }
 
-const authApiGwUrl = sessionStorage.getItem('AUTH_API_GW_URL')
-const registriesSearchApiUrl = sessionStorage.getItem('REGISTRIES_SEARCH_API_URL')
-const payApiGwUrl = sessionStorage.getItem('PAY_API_GW_URL')
-
 // create a new, independent instance of Axios
 const instance = axios.create()
 
 // add request interceptor
 instance.interceptors.request.use(
   request => {
+    const authApiGwUrl = sessionStorage.getItem('AUTH_API_GW_URL')
+    const registriesSearchApiUrl = sessionStorage.getItem('REGISTRIES_SEARCH_API_URL')
+    const payApiGwUrl = sessionStorage.getItem('PAY_API_URL')
+
     // don't add headers for Minio requests
     if (request.url?.startsWith('https://minio')) {
       return request
