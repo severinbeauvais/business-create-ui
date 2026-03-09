@@ -1,11 +1,11 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue2'
 import EnvironmentPlugin from 'vite-plugin-environment'
-import ViteRequireContext from '@originjs/vite-plugin-require-context'
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path')
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs')
 const packageJson = fs.readFileSync('./package.json')
 const appName = JSON.parse(packageJson).appName
@@ -27,8 +27,6 @@ export default defineConfig(() => {
       EnvironmentPlugin({
         BUILD: 'web' // Fix for Vuelidate, allows process.env with Vite.
       }),
-      // *** TODO: remove next line if not needed
-      ViteRequireContext(), // Support require.context in vite.
       // Rewrite @vue/composition-api imports to 'vue' in sbc-common-components.
       // The standalone polyfill has a separate reactivity system from Vue 2.7's built-in
       // composition API, which breaks computed properties (e.g. isAuthenticated in auth store).
@@ -53,7 +51,9 @@ export default defineConfig(() => {
         'vue-template-compiler': path.resolve(__dirname, 'node_modules/vue/compiler-sfc'),
         '@': path.resolve(__dirname, './src')
       },
-      extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
+      extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+      // Fix inline dependency of a dependency, which is the case in Tiptap-Vuetify
+      mainFields: ['module']
     },
     server: {
       host: true,
@@ -76,6 +76,14 @@ export default defineConfig(() => {
       deps: {
         // need sbc-common-components here otherwise vue error
         inline: ['vuetify', 'sbc-common-components']
+      }
+    },
+    optimizeDeps: {
+      esbuildOptions: {
+        // Fix Module has been externalized for browser compatibility warning.
+        plugins: [
+          NodeModulesPolyfillPlugin()
+        ]
       },
       // needed so there aren't two instances of sbc-common-components created
       // needed because sbc-common-components has different dependencies
