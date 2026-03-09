@@ -6,9 +6,9 @@ import { AuthInformationIF, ContactPointIF } from '@/interfaces'
  * Class that provides integration with the Auth API.
  */
 export default class AuthServices {
-  /** The Auth API Gateway URL. */
-  static get authApiGwUrl (): string {
-    return sessionStorage.getItem('AUTH_API_GW_URL')
+  /** The Auth API URL. */
+  static get authApiUrl (): string {
+    return sessionStorage.getItem('AUTH_API_URL')
   }
 
   /**
@@ -19,7 +19,7 @@ export default class AuthServices {
   static async fetchAuthInfo (businessId: string): Promise<AuthInformationIF> {
     if (!businessId) throw new Error('Invalid business id =' + businessId)
 
-    const url = `${this.authApiGwUrl}entities/${businessId}`
+    const url = `${this.authApiUrl}entities/${businessId}`
 
     return axios.get(url)
       .then(response => {
@@ -51,7 +51,7 @@ export default class AuthServices {
    * @returns a promise to return the user info object
    */
   static async fetchUserInfo (): Promise<any> {
-    const url = `${this.authApiGwUrl}users/@me`
+    const url = `${this.authApiUrl}users/@me`
 
     return axios.get(url)
       .then(response => {
@@ -68,7 +68,7 @@ export default class AuthServices {
   static async fetchOrgInfo (orgId: number): Promise<any> {
     if (!orgId) throw new Error('Invalid org id = ' + orgId)
 
-    const url = `${this.authApiGwUrl}orgs/${orgId}`
+    const url = `${this.authApiUrl}orgs/${orgId}`
 
     return axios.get(url)
       .then(response => {
@@ -94,7 +94,7 @@ export default class AuthServices {
       phoneExtension: contactInfo.extension
     }
 
-    const url = `${this.authApiGwUrl}entities/${businessId}/contacts`
+    const url = `${this.authApiUrl}entities/${businessId}/contacts`
 
     return axios.put(url, data)
       .then(response => {
