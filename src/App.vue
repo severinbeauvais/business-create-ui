@@ -1183,9 +1183,8 @@ export default class App extends Mixins(CommonMixin, DateMixin, FilingTemplateMi
   /** Fetches auth and user info, stores it, and returns it. */
   private async loadUserInfo (): Promise<any> {
     // fetch auth org info for dissolution/restoration only
-    // do not set auth org/contact info for Restoration as it is likely to change
     // (this data is not available for an incorporation/registration)
-    if (this.isDissolutionFiling) {
+    if (this.isDissolutionFiling || this.isRestorationFiling) {
       const { contacts, folioNumber } = await AuthServices.fetchAuthInfo(this.getBusinessId)
       if (contacts?.length > 0) {
         this.setBusinessContact(contacts[0])

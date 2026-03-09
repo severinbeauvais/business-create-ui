@@ -4,13 +4,18 @@ import { RestorationResources } from '@/resources/'
 import OfficeAddresses from '@/components/common/OfficeAddresses.vue'
 import BusinessContactInfo from '@/components/common/BusinessContactInfo.vue'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
-import { AuthorizationRoles } from '@/enums'
+import { AuthorizationRoles, RestorationTypes } from '@/enums'
 import { createPinia, setActivePinia } from 'pinia'
 import { useStore } from '@/store/store'
 import { setAuthRole } from '../set-auth-role'
 
 setActivePinia(createPinia())
 const store = useStore()
+
+const mockBusinessContact = {
+  email: 'test@example.com',
+  phone: '(250) 123-4567'
+}
 
 // Test Case Data
 const restorationBusinessInfo = [
@@ -45,6 +50,8 @@ for (const test of restorationBusinessInfo) {
     let wrapper: any
 
     beforeAll(() => {
+      store.stateModel.restoration.type = null
+      store.stateModel.businessContact = mockBusinessContact as any
       store.stateModel.defineCompanyStep.officeAddresses = {
         registeredOffice: {
           deliveryAddress: {
@@ -91,6 +98,7 @@ for (const test of restorationBusinessInfo) {
     })
 
     afterAll(() => {
+      store.stateModel.restoration.type = null
       wrapper.destroy()
     })
 
@@ -113,6 +121,43 @@ for (const test of restorationBusinessInfo) {
       const section = wrapper.findAll('section').at(1)
       expect(section.find('header h2').text()).toBe('Registered Office Contact Information')
       expect(wrapper.findComponent(BusinessContactInfo).exists()).toBe(true)
+    })
+
+    it('passes empty contact point as initial value when no restoration type is selected', () => {
+      store.stateModel.restoration.type = null
+      const contactInfo = wrapper.findComponent(BusinessContactInfo)
+      expect(contactInfo.props('initialValue').email).toBe('')
+      expect(contactInfo.props('initialValue').phone).toBe('')
+    })
+
+    it('passes business contact as initial value for limited restoration', async () => {
+      store.stateModel.restoration.type = RestorationTypes.LIMITED
+      await wrapper.vm.$nextTick()
+      const contactInfo = wrapper.findComponent(BusinessContactInfo)
+      expect(contactInfo.props('initialValue').email).toBe(mockBusinessContact.email)
+      expect(contactInfo.props('initialValue').phone).toBe(mockBusinessContact.phone)
+    })
+
+    it('passes empty contact point as initial value for full restoration', async () => {
+      store.stateModel.restoration.type = RestorationTypes.FULL
+      await wrapper.vm.$nextTick()
+      const contactInfo = wrapper.findComponent(BusinessContactInfo)
+      expect(contactInfo.props('initialValue').email).toBe('')
+      expect(contactInfo.props('initialValue').phone).toBe('')
+    })
+
+    it('sets contact info as non-editable for limited restoration', async () => {
+      store.stateModel.restoration.type = RestorationTypes.LIMITED
+      await wrapper.vm.$nextTick()
+      const contactInfo = wrapper.findComponent(BusinessContactInfo)
+      expect(contactInfo.props('isEditing')).toBe(false)
+    })
+
+    it('sets contact info as editable for full restoration', async () => {
+      store.stateModel.restoration.type = RestorationTypes.FULL
+      await wrapper.vm.$nextTick()
+      const contactInfo = wrapper.findComponent(BusinessContactInfo)
+      expect(contactInfo.props('isEditing')).toBe(true)
     })
   })
 }

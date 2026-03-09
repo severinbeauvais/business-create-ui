@@ -53,7 +53,10 @@
       <header id="registered-office-contact-header">
         <h2>Registered Office Contact Information</h2>
         <p>
-          Enter the contact information for the business. The Corporate Registry will use this to communicate with the
+          <template v-if="isFullRestorationFiling">
+            Enter the contact information for the business.
+          </template>
+          The Corporate Registry will use this to communicate with the
           business in the future, including sending documents and notifications.
         </p>
       </header>
@@ -64,10 +67,10 @@
         :class="{ 'invalid-section': getShowErrors && !businessContactFormValid }"
       >
         <BusinessContactInfo
-          :initialValue="getBusinessContact"
-          :isEditing="true"
-          :showErrors="getShowErrors"
-          @update="setBusinessContact($event)"
+          :initialValue="initialContactPoint"
+          :isEditing="isFullRestorationFiling"
+          :showErrors="isFullRestorationFiling ? getShowErrors : false"
+          @update="onBusinessContactUpdate($event)"
           @valid="onBusinessContactFormValidityChange($event)"
         />
       </v-card>
@@ -79,7 +82,8 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Getter, Action } from 'pinia-class'
 import { useStore } from '@/store/store'
-import { AddressIF, ContactPointIF, EmptyAddress, RegisteredRecordsAddressesIF, RestorationStateIF } from '@/interfaces'
+import { AddressIF, ContactPointIF, EmptyAddress, EmptyContactPoint,
+  RegisteredRecordsAddressesIF, RestorationStateIF } from '@/interfaces'
 import { CommonMixin } from '@/mixins'
 import { RestorationTypes, RouteNames } from '@/enums'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
@@ -99,6 +103,7 @@ export default class RestorationBusinessInformation extends Mixins(CommonMixin) 
   @Getter(useStore) getShowErrors!: boolean
   @Getter(useStore) isBaseCompany!: boolean
   @Getter(useStore) isEntityType!: boolean
+  @Getter(useStore) isFullRestorationFiling!: boolean
 
   @Action(useStore) setBusinessContact!: (x: ContactPointIF) => void
   @Action(useStore) setDefineCompanyStepValidity!: (x: boolean) => void
@@ -109,6 +114,7 @@ export default class RestorationBusinessInformation extends Mixins(CommonMixin) 
   businessContactFormValid = false
   addressFormValid = true
   allowEditingOfficeAddresses = false
+  initialContactPoint: ContactPointIF = { ...EmptyContactPoint }
 
   // Enum for template
   readonly CorpTypeCd = CorpTypeCd
@@ -171,6 +177,13 @@ export default class RestorationBusinessInformation extends Mixins(CommonMixin) 
     }
   }
 
+  /** Only update the business contact if there is actual data to avoid overwriting Auth data on load. */
+  onBusinessContactUpdate (contactInfo: ContactPointIF): void {
+    if (contactInfo.email) {
+      this.setBusinessContact(contactInfo)
+    }
+  }
+
   onBusinessContactFormValidityChange (valid: boolean): void {
     this.businessContactFormValid = valid
     this.setDefineCompanyStepValidity(
@@ -193,10 +206,15 @@ export default class RestorationBusinessInformation extends Mixins(CommonMixin) 
     if (val === RestorationTypes.FULL) {
       this.allowEditingOfficeAddresses = true
       this.addressFormValid = false
+      this.initialContactPoint = { ...EmptyContactPoint }
+      this.businessContactFormValid = false
     }
     if (val === RestorationTypes.LIMITED) {
       this.allowEditingOfficeAddresses = false
       this.addressFormValid = true
+      this.initialContactPoint = { ...this.getBusinessContact }
+      this.businessContactFormValid = true
+      this.setDefineCompanyStepValidity(true)
     }
     // else -- should never happen
   }

@@ -305,7 +305,7 @@ export interface RestorationFilingIF {
   restoration: {
     applicationDate?: string // YYYY-MM-DD
     approvalType?: ApprovalTypes
-    contactPoint: ContactPointIF
+    contactPoint?: ContactPointIF
     courtOrder?: CourtOrderIF
     expiry?: string // YYYY-MM-DD
     nameRequest?: NameRequestFilingIF

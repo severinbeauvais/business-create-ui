@@ -2,7 +2,7 @@ import { wrapperFactory } from '../vitest-wrapper-factory'
 import MixinTester from '@/mixin-tester.vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { useStore } from '@/store/store'
-import { BusinessTypes, PartyTypes, RoleTypes } from '@/enums'
+import { BusinessTypes, PartyTypes, RestorationTypes, RoleTypes } from '@/enums'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 import { NameRequestIF } from '@/interfaces'
 import { CorrectNameOptions } from '@bcrs-shared-components/enums'
@@ -539,3 +539,49 @@ for (const entityType of ['BEN', 'BC', 'CC', 'ULC']) {
     })
   })
 }
+
+describe('Restoration Filing', () => {
+  let wrapper: any
+
+  beforeEach(() => {
+    wrapper = wrapperFactory(MixinTester, null, {})
+
+    store.stateModel.businessContact = {
+      email: 'test@example.com',
+      phone: '(250) 123-4567',
+      extension: 123
+    }
+  })
+
+  afterEach(() => {
+    wrapper.destroy()
+  })
+
+  it('excludes contactPoint for a limited restoration', () => {
+    store.stateModel.restoration.type = RestorationTypes.LIMITED
+
+    const filing = wrapper.vm.buildRestorationFiling()
+
+    expect(filing.restoration.contactPoint).toBeUndefined()
+  })
+
+  it('includes contactPoint for a full restoration', () => {
+    store.stateModel.restoration.type = RestorationTypes.FULL
+
+    const filing = wrapper.vm.buildRestorationFiling()
+
+    expect(filing.restoration.contactPoint).toBeDefined()
+    expect(filing.restoration.contactPoint.email).toBe('test@example.com')
+    expect(filing.restoration.contactPoint.phone).toBe('(250) 123-4567')
+    expect(filing.restoration.contactPoint.extension).toBe(123)
+  })
+
+  it('does not include extension in contactPoint when extension is empty', () => {
+    store.stateModel.restoration.type = RestorationTypes.FULL
+    store.stateModel.businessContact.extension = null
+
+    const filing = wrapper.vm.buildRestorationFiling()
+
+    expect(filing.restoration.contactPoint.extension).toBeUndefined()
+  })
+})

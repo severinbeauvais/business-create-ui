@@ -915,14 +915,14 @@ export default class FilingTemplateMixin extends Mixins(AmalgamationMixin, DateM
       restoration: {
         applicationDate: this.getRestoration.applicationDate || undefined, // can't be null
         approvalType: this.getRestoration.approvalType,
-        contactPoint: {
+        contactPoint: this.getRestoration.type === RestorationTypes.FULL ? {
           email: this.getBusinessContact.email || '',
           phone: this.getBusinessContact.phone || '',
           // don't save extension if it's empty
           ...this.getBusinessContact.extension
             ? { extension: +this.getBusinessContact.extension }
             : {}
-        },
+        } : undefined,
         expiry: this.getRestoration.expiry || undefined, // can't be null
         nameRequest: {
           legalType: this.getEntityType

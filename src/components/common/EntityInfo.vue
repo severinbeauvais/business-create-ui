@@ -126,6 +126,7 @@ export default class EntityInfo extends Mixins(DateMixin) {
   @Getter(useStore) isContinuationInFiling!: boolean
   @Getter(useStore) isIncorporationFiling!: boolean
   @Getter(useStore) isRegistrationFiling!: boolean
+  @Getter(useStore) isRestorationFiling!: boolean
 
   /** The URL to get or post staff comments. */
   get commentsUrl (): string {
@@ -178,6 +179,9 @@ export default class EntityInfo extends Mixins(DateMixin) {
   }
 
   get email (): string {
+    if (this.isRestorationFiling) {
+      return ''
+    }
     if (this.isIncorporationFiling || this.isContinuationInFiling) {
       return this.getUserEmail
     }
@@ -185,6 +189,9 @@ export default class EntityInfo extends Mixins(DateMixin) {
   }
 
   get phone (): string {
+    if (this.isRestorationFiling) {
+      return ''
+    }
     if (this.isIncorporationFiling || this.isContinuationInFiling) {
       return this.getUserPhone
     }
