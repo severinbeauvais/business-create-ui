@@ -7,7 +7,7 @@ import Vue from 'vue'
 import Vuetify from 'vuetify'
 import Vuelidate from 'vuelidate'
 import { getVueRouter } from '@/router'
-import { getPiniaStore, getVuexStore } from '@/store'
+import { createPinia, PiniaVuePlugin } from 'pinia'
 import Affix from 'vue-affix'
 import Vue2Filters from 'vue2-filters' // needed by SbcFeeSummary
 import VueObserveVisibility from 'vue-observe-visibility' // added to help with rendering of text area heights properly
@@ -37,6 +37,7 @@ Vue.use(Affix)
 Vue.use(Vuelidate)
 Vue.use(Vue2Filters)
 Vue.use(VueObserveVisibility)
+Vue.use(PiniaVuePlugin)
 
 // main code
 async function start () {
@@ -96,8 +97,7 @@ async function start () {
       }
     }),
     router: getVueRouter(),
-    store: getVuexStore(),
-    pinia: getPiniaStore(),
+    pinia: createPinia(),
     render: h => h(App)
   }).$mount('#app')
 }

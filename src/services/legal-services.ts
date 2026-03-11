@@ -1,4 +1,4 @@
-import { AxiosInstance as axios, GetFeatureFlag } from '@/utils'
+import { AxiosInstance as axios } from '@/utils'
 import { AxiosResponse } from 'axios'
 import { StatusCodes } from 'http-status-codes'
 import { BusinessIF, DissolutionFilingIF, IncorporationFilingIF, NameRequestIF, OrgPersonIF, PresignedUrlIF,
@@ -10,11 +10,9 @@ import { ShareStructureIF } from '@bcrs-shared-components/interfaces'
  * Class that provides integration with the Legal (aka Business) API.
  */
 export default class LegalServices {
-  /** The Legal API URL or Business API Gateway URL, depending on the FF. */
-  static get legalBusinessUrl (): string {
-    return GetFeatureFlag('use-business-api-gw-url')
-      ? sessionStorage.getItem('BUSINESS_API_GW_URL')
-      : sessionStorage.getItem('LEGAL_API_URL')
+  /** The Business API URL. */
+  static get businessApiUrl (): string {
+    return sessionStorage.getItem('BUSINESS_API_URL')
   }
 
   /**
@@ -23,7 +21,7 @@ export default class LegalServices {
    * @returns a promise to return the filings list
    */
   static async fetchFilings (businessId: string): Promise<any[]> {
-    const url = `${this.legalBusinessUrl}businesses/${businessId}/filings`
+    const url = `${this.businessApiUrl}businesses/${businessId}/filings`
 
     return axios.get(url)
       .then(response => {
@@ -44,7 +42,7 @@ export default class LegalServices {
    * @returns a promise to return the draft filing
    */
   static async fetchFirstOrOnlyFiling (tempId: string): Promise<any> {
-    const url = `${this.legalBusinessUrl}businesses/${tempId}/filings`
+    const url = `${this.businessApiUrl}businesses/${tempId}/filings`
 
     return axios.get(url)
       .then(response => {
@@ -79,7 +77,7 @@ export default class LegalServices {
    * @returns a promise to return the draft filing
    */
   static async fetchFirstTask (businessId: string): Promise<any> {
-    const url = `${this.legalBusinessUrl}businesses/${businessId}/tasks`
+    const url = `${this.businessApiUrl}businesses/${businessId}/tasks`
 
     return axios.get(url)
       .then(response => {
@@ -101,7 +99,7 @@ export default class LegalServices {
    * @returns a promise to return the filing object
    */
   static async fetchFiling (url: string): Promise<any> {
-    return axios.get(`${this.legalBusinessUrl}${url}`)
+    return axios.get(`${this.businessApiUrl}${url}`)
       .then(response => {
         const filing = response?.data?.filing
         if (!filing) {
@@ -131,7 +129,7 @@ export default class LegalServices {
     if (!filingId) throw new Error('updateFiling(), invalid filing id')
 
     // put updated filing to filings endpoint
-    let url = `${this.legalBusinessUrl}businesses/${id}/filings/${filingId}`
+    let url = `${this.businessApiUrl}businesses/${id}/filings/${filingId}`
     if (isDraft) {
       url += '?draft=true'
     }
@@ -161,7 +159,7 @@ export default class LegalServices {
   static async fetchNameRequest (nrNumber: string, phone = '', email = ''): Promise<NameRequestIF> {
     if (!nrNumber) throw new Error('Invalid parameter \'nrNumber\'')
 
-    const url = `${this.legalBusinessUrl}nameRequests/${nrNumber}/validate?phone=${phone}&email=${email}`
+    const url = `${this.businessApiUrl}nameRequests/${nrNumber}/validate?phone=${phone}&email=${email}`
 
     return axios.get(url)
       .then(response => {
@@ -177,7 +175,7 @@ export default class LegalServices {
    * @returns a promise to return the parties from the response
    */
   static async fetchParties (businessId: string): Promise<any> {
-    const url = `${this.legalBusinessUrl}businesses/${businessId}/parties`
+    const url = `${this.businessApiUrl}businesses/${businessId}/parties`
 
     return axios.get(url)
       .then(response => {
@@ -193,7 +191,7 @@ export default class LegalServices {
    * @returns a promise to return the directors from the response
    */
   static async fetchDirectors (businessId: string): Promise<OrgPersonIF[]> {
-    const url = `${this.legalBusinessUrl}businesses/${businessId}/directors`
+    const url = `${this.businessApiUrl}businesses/${businessId}/directors`
 
     return axios.get(url)
       .then(response => {
@@ -235,7 +233,7 @@ export default class LegalServices {
    * @returns a promise to return the share structure from the response
    */
   static async fetchShareStructure (businessId: string): Promise<ShareStructureIF> {
-    const url = `${this.legalBusinessUrl}businesses/${businessId}/share-classes`
+    const url = `${this.businessApiUrl}businesses/${businessId}/share-classes`
 
     return axios.get(url)
       .then(response => {
@@ -259,7 +257,7 @@ export default class LegalServices {
    * @returns a promise to return the resolutions
    */
   static async fetchResolutions (businessId: string): Promise<ResolutionIF[]> {
-    const url = `${this.legalBusinessUrl}businesses/${businessId}/resolutions`
+    const url = `${this.businessApiUrl}businesses/${businessId}/resolutions`
 
     return axios.get(url)
       .then(response => {
@@ -277,7 +275,7 @@ export default class LegalServices {
    * @returns a promise to return the addresses from the response
    */
   static async fetchAddresses (businessId: string): Promise<any> {
-    const url = `${this.legalBusinessUrl}businesses/${businessId}/addresses`
+    const url = `${this.businessApiUrl}businesses/${businessId}/addresses`
 
     return axios.get(url)
       .then(response => {
@@ -298,7 +296,7 @@ export default class LegalServices {
    * @returns a promise to return the business info
    */
   static async fetchBusinessInfo (businessId: string): Promise<BusinessIF> {
-    const url = `${this.legalBusinessUrl}businesses/${businessId}`
+    const url = `${this.businessApiUrl}businesses/${businessId}`
 
     return axios.get(url)
       .then(response => {
@@ -313,7 +311,7 @@ export default class LegalServices {
    * @returns a promise to return the list of authorized actions
    */
   static async fetchAuthorizedActions (): Promise<AuthorizedActions[]> {
-    const url = `${this.legalBusinessUrl}permissions`
+    const url = `${this.businessApiUrl}permissions`
 
     return axios.get(url)
       .then(response => {
@@ -329,7 +327,7 @@ export default class LegalServices {
    * @returns the presigned url object
    */
   static async getPresignedUrl (fileName: string): Promise<PresignedUrlIF> {
-    const url = `${this.legalBusinessUrl}documents/${fileName}/signatures`
+    const url = `${this.businessApiUrl}documents/${fileName}/signatures`
 
     return axios.get(url)
       .then(response => {
@@ -376,7 +374,7 @@ export default class LegalServices {
   static async deleteDocument (documentKey: string): Promise<AxiosResponse> {
     if (!documentKey) throw new Error('Invalid parameters')
 
-    const url = `${this.legalBusinessUrl}documents/${documentKey}`
+    const url = `${this.businessApiUrl}documents/${documentKey}`
 
     return axios.delete(url)
   }
@@ -390,7 +388,7 @@ export default class LegalServices {
   static async downloadDocument (documentKey: string, documentName: string): Promise<AxiosResponse> {
     if (!documentKey || !documentName) throw new Error('Invalid parameters')
 
-    const url = `${this.legalBusinessUrl}documents/${documentKey}`
+    const url = `${this.businessApiUrl}documents/${documentKey}`
 
     // add/override headers
     const config = {

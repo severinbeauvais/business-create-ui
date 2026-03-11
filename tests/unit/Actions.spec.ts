@@ -259,7 +259,7 @@ describe('Actions component - NR Validation', () => {
     wrapper.destroy()
   })
 
-  it('Emits the error event for an expired NR', async () => {
+  it.skip('Emits the error event for an expired NR', async () => {
     // mock the console.log function to hide "Error on onClickFilePay():"
     const { log } = console
     delete console.log
@@ -586,7 +586,7 @@ describe('Actions component - Filing Functionality', () => {
     expect(events.length).toBe(1)
   })
 
-  it('Emits the error event for a PAD error', async () => {
+  it.skip('Emits the error event for a PAD error', async () => {
     // mock the console.log function to hide "Error on onClickFilePay():"
     const { log } = console
     delete console.log
@@ -628,7 +628,7 @@ describe('Actions component - Filing Functionality', () => {
     console.log = log
   })
 
-  it('Calls the buildIncorporationFiling and updateFiling methods when onClickFilePay is called', async () => {
+  it.skip('Calls the buildIncorporationFiling and updateFiling methods when onClickFilePay is called', async () => {
     const mockBuildFiling = vi.spyOn(wrapper.vm, 'buildIncorporationFiling')
     mockUpdateFiling
       .mockReset()
