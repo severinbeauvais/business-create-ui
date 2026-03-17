@@ -53,7 +53,7 @@
           :showErrors="getShowErrors"
           :inputAddresses="getOfficeAddresses"
           @update:addresses="setOfficeAddresses($event)"
-          @valid="addressFormValid = $event"
+          @valid="onOfficeAddressesValid($event)"
         />
       </div>
     </section>
@@ -186,6 +186,22 @@ export default class ContinuationInBusinessBc extends Mixins(CommonMixin) {
     }
   }
 
+  /** Whether the registered office addresses are empty. */
+  get isEmptyRegisteredAddress (): boolean {
+    return (
+      this.isEmptyAddress(this.getOfficeAddresses.registeredOffice?.mailingAddress) ||
+      this.isEmptyAddress(this.getOfficeAddresses.registeredOffice?.deliveryAddress)
+    )
+  }
+
+  /** Whether the records office addresses are empty. */
+  get isEmptyRecordsAddress (): boolean {
+    return (
+      this.isEmptyAddress(this.getOfficeAddresses.recordsOffice?.mailingAddress) ||
+      this.isEmptyAddress(this.getOfficeAddresses.recordsOffice?.deliveryAddress)
+    )
+  }
+
   /** Called when component is created. */
   created (): void {
     // ignore data changes while page loads
@@ -224,6 +240,13 @@ export default class ContinuationInBusinessBc extends Mixins(CommonMixin) {
         deliveryAddress: defaultAddress
       }
     })
+  }
+
+  onOfficeAddressesValid (valid: boolean): void {
+    // OfficeAddresses defaults validity flags to true internally and emits on mount
+    // regardless of data — ensure empty addresses cannot mark the step valid
+    const hasEmptyRequiredAddress = this.isEmptyRegisteredAddress || this.isEmptyRecordsAddress
+    this.addressFormValid = valid && !hasEmptyRequiredAddress
   }
 
   @Watch('getNameTranslationsValid', { immediate: true })

@@ -50,4 +50,77 @@ describe('Continuation In Business BC component', () => {
 
     wrapper.destroy()
   })
+
+  it('does not mark address form valid when OfficeAddresses emits true with empty addresses', async () => {
+    const wrapper = wrapperFactory(ContinuationInBusinessBc)
+    await Vue.nextTick()
+
+    const vm = wrapper.vm as any
+
+    // precondition: simulate a previously valid address form
+    vm.addressFormValid = true
+    expect(vm.addressFormValid).toBe(true)
+
+    // simulate OfficeAddresses emitting true with empty addresses
+    vm.onOfficeAddressesValid(true)
+    await Vue.nextTick()
+
+    // should become false since addresses are empty
+    expect(vm.addressFormValid).toBe(false)
+
+    wrapper.destroy()
+  })
+
+  it('marks address form valid when OfficeAddresses emits true with non-empty addresses', async () => {
+    const wrapper = wrapperFactory(ContinuationInBusinessBc)
+    await Vue.nextTick()
+
+    const vm = wrapper.vm as any
+
+    const realAddress = {
+      streetAddress: '123 Main St',
+      addressCity: 'Victoria',
+      addressRegion: 'BC',
+      addressCountry: 'CA',
+      postalCode: 'V8W 1A1',
+      deliveryInstructions: '',
+      streetAddressAdditional: ''
+    }
+
+    await vm.setOfficeAddresses({
+      registeredOffice: {
+        mailingAddress: { ...realAddress },
+        deliveryAddress: { ...realAddress }
+      },
+      recordsOffice: {
+        mailingAddress: { ...realAddress },
+        deliveryAddress: { ...realAddress }
+      }
+    })
+
+    await Vue.nextTick()
+
+    vm.onOfficeAddressesValid(true)
+    await Vue.nextTick()
+
+    // should be true since addresses are not empty and valid
+    expect(vm.addressFormValid).toBe(true)
+
+    wrapper.destroy()
+  })
+
+  it('marks address form invalid when OfficeAddresses emits false', async () => {
+    const wrapper = wrapperFactory(ContinuationInBusinessBc)
+    await Vue.nextTick()
+
+    const vm = wrapper.vm as any
+
+    // simulate OfficeAddresses emitting false (user cleared an address)
+    vm.onOfficeAddressesValid(false)
+    await Vue.nextTick()
+
+    expect(vm.addressFormValid).toBe(false)
+
+    wrapper.destroy()
+  })
 })
