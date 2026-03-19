@@ -50,16 +50,16 @@
             <td class="list-item__title">
               {{ row.item.name }}
             </td>
-            <td class="share-series-value text-right">
+            <td class="color-md-text text-right">
               {{ row.item.maxNumberOfShares ? (+row.item.maxNumberOfShares).toLocaleString() : 'No Maximum' }}
             </td>
-            <td class="share-series-value text-right">
+            <td class="color-md-text text-right">
               {{ formatParValue(row.item) }}
             </td>
-            <td class="share-series-value">
+            <td class="color-md-text">
               {{ row.item.currency }}
             </td>
-            <td class="share-series-value">
+            <td class="color-md-text">
               {{ row.item.hasRightsOrRestrictions ? 'Yes' : 'No' }}
             </td>
 
@@ -160,7 +160,7 @@
             <td class="text-right">
               {{ seriesItem.maxNumberOfShares ? (+seriesItem.maxNumberOfShares).toLocaleString() : 'No Maximum' }}
             </td>
-            <td class="share-series-value text-right">
+            <td class="color-md-text text-right">
               {{ formatParValue(row.item) }}
             </td>
             <td>{{ row.item.currency }}</td>
@@ -241,7 +241,6 @@
 import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
 import { RouteNames } from '@/enums'
 import { arrayMoveMutable } from 'array-move'
-import { FormatCurrency } from '@/utils'
 
 @Component({})
 export default class ListShareClass extends Vue {
@@ -267,21 +266,20 @@ export default class ListShareClass extends Vue {
     { text: 'Maximum Number of Shares', value: 'maxNumberOfShares', class: 'share-structure-header' },
     { text: 'Par Value', value: 'parValue', class: 'share-structure-header' },
     { text: 'Currency', value: 'currency', class: 'share-structure-header' },
-    { text: 'Special Rights or Restrictions', value: 'hasRightsOrRestrictions', class: 'share-structure-header' },
-    { text: '', value: 'actions' }
+    { text: 'Special Rights or Restrictions', value: 'hasRightsOrRestrictions', class: 'share-structure-header' }
   ]
 
-  /** Returns a formatted par value. */
+  /** Returns a par value formatted for display in the shares table. */
   formatParValue (item: any): string {
     if (!item.parValue) return 'No Par Value'
 
-    // format some currencies
+    // for specific currencies, prepend currency symbol and show numbers with at least 2 decimal places
     if (['AUD', 'CAD', 'USD'].includes(item.currency)) {
-      return '$' + FormatCurrency(item.parValue)
+      return '$' + item.parValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 20 })
     }
 
-    // no formatting for other currencies
-    return item.parValue.toString()
+    // for other currencies, show no currency symbol or decimal places (unless needed)
+    return item.parValue.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 20 })
   }
 
   /**
@@ -456,25 +454,50 @@ tbody {
   }
 }
 
-.share-series-value {
-  color: $gray7 !important;
-}
-
 :deep() {
-  // borders around header elements
-  .v-data-table > .v-data-table__wrapper > table > thead > tr > th {
-    box-shadow: 1px 2px 0 0 rgba(0,0,0,0.1);
-    border: none !important;
-  }
+  .v-data-table > .v-data-table__wrapper > table {
+    table-layout: fixed; // for enforcing td widths
 
-  // limit width of "Maximum Number of Shares"
-  .v-data-table > .v-data-table__wrapper > table > thead > tr > th:nth-child(2) {
-    max-width: 140px;
-  }
+    // borders between header elements
+    thead > tr > th {
+      box-shadow: 1px 0 0 0 rgba(0,0,0,0.1);
+      border: none !important;
+    }
 
-  // limit width of "Special Rights or Restrictions"
-  .v-data-table > .v-data-table__wrapper > table > thead > tr > th:nth-child(5) {
-    max-width: 140px;
+    // border between header and first row
+    tbody > tr:first-of-type > td {
+      border-top: 3px solid rgba(0,0,0,0.1);
+    }
+
+    // set width of "Name of Share Class or Series"
+    .share-structure-header:nth-child(1) {
+      // width: 280px;
+      width: 30%;
+    }
+
+    // set width of "Maximum Number of Shares"
+    .share-structure-header:nth-child(2) {
+      // width: 170px;
+      width: 16%;
+    }
+
+    // set width of "Par Value"
+    .share-structure-header:nth-child(3) {
+      // width: 170px;
+      width: 16%;
+    }
+
+    // set width of "Currency"
+    .share-structure-header:nth-child(4) {
+      // width: 96px;
+      width: 9.75%;
+    }
+
+    // set width of "Special Rights or Restrictions"
+    .share-structure-header:nth-child(5) {
+      // width: 135px;
+      width: 13.5%;
+    }
   }
 }
 </style>

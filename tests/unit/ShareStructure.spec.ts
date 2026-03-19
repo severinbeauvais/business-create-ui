@@ -34,8 +34,7 @@ const cancelButtonSelector = '#btn-cancel'
 const formSelector = '.share-structure-form'
 
 /**
- * Creates and mounts a component, so that it can be tested.
- *
+ * Creates and mounts the ShareStructure component.
  * @returns a Wrapper<ShareStructure> object with the given parameters.
  */
 function createComponent (
@@ -64,6 +63,10 @@ function createComponent (
   })
 }
 
+/**
+ * Creates a share structure object (share class or series).
+ * @returns a ShareClassIF object with the given parameters.
+ */
 function createShareStructure (
   id = null,
   priority = null,
@@ -289,6 +292,37 @@ describe('Share Structure component', () => {
     wrapper.destroy()
   })
 
+  it('Shows error message if par value is more than 38 characters', async () => {
+    const existingShareClass = createShareStructure(null, 1, 'Class', 'Class A', true, 100, true, 0.50, 'CAD', true)
+    const shareClass = createShareStructure(null, 1, 'Class', 'Class B', true, 100, true, 0.50, 'CAD', true)
+    const wrapper: Wrapper<ShareStructure> = createComponent(shareClass, -1, '1', null, [existingShareClass])
+    const inputElement: Wrapper<Vue> = wrapper.find(classParValue)
+
+    inputElement.setValue('100000000000000000000000000000000000000') // 39 chars - invalid
+    inputElement.trigger('change')
+    await waitForUpdate()
+
+    expect(wrapper.find(formSelector).text()).toContain('Maximum 38 characters')
+    expect(wrapper.vm.$data.formValid).toBe(false)
+
+    wrapper.destroy()
+  })
+
+  it('Accepts valid 38 character par value', async () => {
+    const existingShareClass = createShareStructure(null, 1, 'Class', 'Class A', true, 100, true, 0.50, 'CAD', true)
+    const shareClass = createShareStructure(null, 1, 'Class', 'Class B', true, 100, true, 0.50, 'CAD', true)
+    const wrapper: Wrapper<ShareStructure> = createComponent(shareClass, -1, '1', null, [existingShareClass])
+    const inputElement: Wrapper<Vue> = wrapper.find(classParValue)
+
+    inputElement.setValue('10000000000000000000000000000000000000') // 38 chars - valid
+    inputElement.trigger('change')
+    await waitForUpdate()
+
+    expect(wrapper.find(formSelector).text()).not.toContain('Maximum 38 characters')
+    expect(wrapper.vm.$data.formValid).toBe(true)
+
+    wrapper.destroy()
+  })
   it('Shows error message if maximum shares is not entered', async () => {
     const existingShareClass = createShareStructure(null, 1, 'Class', 'Class A', true, 100, true, 0.50, 'CAD', true)
     const shareClass = createShareStructure(null, 1, 'Class', 'Class B', true, 100, true, 0.50, 'CAD', true)
@@ -356,19 +390,33 @@ describe('Share Structure component', () => {
     wrapper.destroy()
   })
 
-  it('Shows error message if maximum shares is not less than 16 digits', async () => {
+  it('Shows error message if maximum number of shares is more than 20 characters', async () => {
     const existingShareClass = createShareStructure(null, 1, 'Class', 'Class A', true, 100, true, 0.50, 'CAD', true)
     const shareClass = createShareStructure(null, 1, 'Class', 'Class B', true, 100, true, 0.50, 'CAD', true)
     const wrapper: Wrapper<ShareStructure> = createComponent(shareClass, -1, '1', null, [existingShareClass])
     const inputElement: Wrapper<Vue> = wrapper.find(txtMaxShares)
 
-    // try 16 digits
-    inputElement.setValue(1234567890123456)
+    inputElement.setValue('100000000000000000000') // 21 chars - invalid
     inputElement.trigger('change')
     await waitForUpdate()
 
-    expect(wrapper.find(formSelector).text()).toContain('Number must be less than 16 digits')
+    expect(wrapper.find(formSelector).text()).toContain('Maximum 20 characters')
     expect(wrapper.vm.$data.formValid).toBe(false)
+
+    wrapper.destroy()
+  })
+
+  it('Accepts valid 20 character maximum number of shares', async () => {
+    const shareClass = createShareStructure(null, 1, 'Class', 'Class A', true, 100, true, 0.50, 'CAD', true)
+    const wrapper: Wrapper<ShareStructure> = createComponent(shareClass, -1, '1', null, [])
+    const inputElement: Wrapper<Vue> = wrapper.find(txtMaxShares)
+
+    inputElement.setValue('10000000000000000000') // 20 chars - valid
+    inputElement.trigger('change')
+    await waitForUpdate()
+
+    expect(wrapper.find(formSelector).text()).not.toContain('Maximum 20 characters')
+    expect(wrapper.vm.$data.formValid).toBe(true)
 
     wrapper.destroy()
   })
@@ -503,7 +551,8 @@ describe('Share Structure component', () => {
     expect(wrapper.vm.$data.formValid).toBe(false)
     wrapper.destroy()
   })
-  it('Do not show error if par value < 1 does not have 0 before decimal ', async () => {
+
+  it('Does not show error if par value < 1 does not have 0 before decimal ', async () => {
     const existingShareClass = createShareStructure(null, 1, 'Class', 'Class A', true, 100, true, 0.50, 'CAD', true)
     const shareClass = createShareStructure(null, 1, 'Class', 'Class B', true, 100, true, 0.50, 'CAD', true)
     const wrapper: Wrapper<ShareStructure> = createComponent(shareClass, -1, '1', null, [existingShareClass])
@@ -590,18 +639,6 @@ describe('Share Structure component', () => {
     inputElement.trigger('change')
     await waitForUpdate()
     expect(wrapper.find(formSelector).text()).not.toContain('should not contain')
-    expect(wrapper.vm.$data.formValid).toBe(true)
-    wrapper.destroy()
-  })
-
-  it('Accepts valid 15 digit maximum shares', async () => {
-    const shareClass = createShareStructure(null, 1, 'Class', 'Class A', true, 100, true, 0.50, 'CAD', true)
-    const wrapper: Wrapper<ShareStructure> = createComponent(shareClass, -1, '1', null, [])
-    const inputElement: Wrapper<Vue> = wrapper.find(txtMaxShares)
-    inputElement.setValue(123456789012345) // 15 digits - valid
-    inputElement.trigger('change')
-    await waitForUpdate()
-    expect(wrapper.find(formSelector).text()).not.toContain('Number must be less than 16 digits')
     expect(wrapper.vm.$data.formValid).toBe(true)
     wrapper.destroy()
   })
