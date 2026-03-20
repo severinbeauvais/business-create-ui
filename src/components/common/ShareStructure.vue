@@ -239,9 +239,9 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
     return value?.toLocaleString('en-US', { maximumFractionDigits: 20, useGrouping: false }) || ''
   }
 
-  /** Returns an event (string) converted to a number for assignment to a variable. */
-  stringToNumber (event: string): number {
-    return (event === '' ? null : Number(event))
+  /** Returns a string converted to a number for assignment to a variable. */
+  stringToNumber (value: string): number | null {
+    return (event === '') ? null : Number(value)
   }
 
   // Rules
@@ -277,9 +277,9 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
     if (!this.hasNoMaximumShares) {
       rules = [
         (v: string) => (v !== '' && v !== null && v !== undefined) || 'Number of shares is required',
-        (v: string) => /^-?\d+$/.test(v) || 'Must be a whole number',
+        (v: string) => Number.isInteger(+v) || 'Must be a whole number',
         (v: string) => (+v > 0) || 'Number must be greater than 0',
-        (v: string) => (v && v.length < 21) || 'Maximum 20 characters',
+        (v: string) => (v.length <= 20) || 'Maximum 20 characters',
         (v: string) => (SignificantDigits(v) <= 16) || 'Amount has too many significant digits'
       ]
       // To prevent changing share class value to a lower value after adding series.
@@ -311,8 +311,9 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
 
     return [
       (v: string) => (v !== '' && v !== null && v !== undefined) || 'Par value is required',
+      (v: string) => Number.isFinite(+v) || 'Par value must be a valid number',
       (v: string) => (+v > 0) || 'Amount must be greater than 0',
-      (v: string) => (v && v.length < 39) || 'Maximum 38 characters',
+      (v: string) => (v.length <= 38) || 'Maximum 38 characters',
       (v: string) => (SignificantDigits(v) <= 16) || 'Amount has too many significant digits'
     ]
   }

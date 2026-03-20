@@ -298,7 +298,8 @@ describe('Share Structure component', () => {
     const wrapper: Wrapper<ShareStructure> = createComponent(shareClass, -1, '1', null, [existingShareClass])
     const inputElement: Wrapper<Vue> = wrapper.find(classParValue)
 
-    inputElement.setValue('100000000000000000000000000000000000000') // 39 chars - invalid
+    // try 39 chars (invalid)
+    inputElement.setValue('100000000000000000000000000000000000000')
     inputElement.trigger('change')
     await waitForUpdate()
 
@@ -314,7 +315,8 @@ describe('Share Structure component', () => {
     const wrapper: Wrapper<ShareStructure> = createComponent(shareClass, -1, '1', null, [existingShareClass])
     const inputElement: Wrapper<Vue> = wrapper.find(classParValue)
 
-    inputElement.setValue('10000000000000000000000000000000000000') // 38 chars - valid
+    // try 38 chars (valid)
+    inputElement.setValue('10000000000000000000000000000000000000')
     inputElement.trigger('change')
     await waitForUpdate()
 
@@ -323,6 +325,7 @@ describe('Share Structure component', () => {
 
     wrapper.destroy()
   })
+
   it('Shows error message if maximum shares is not entered', async () => {
     const existingShareClass = createShareStructure(null, 1, 'Class', 'Class A', true, 100, true, 0.50, 'CAD', true)
     const shareClass = createShareStructure(null, 1, 'Class', 'Class B', true, 100, true, 0.50, 'CAD', true)
@@ -396,7 +399,8 @@ describe('Share Structure component', () => {
     const wrapper: Wrapper<ShareStructure> = createComponent(shareClass, -1, '1', null, [existingShareClass])
     const inputElement: Wrapper<Vue> = wrapper.find(txtMaxShares)
 
-    inputElement.setValue('100000000000000000000') // 21 chars - invalid
+    // try 21 chars (invalid)
+    inputElement.setValue('100000000000000000000')
     inputElement.trigger('change')
     await waitForUpdate()
 
@@ -411,7 +415,8 @@ describe('Share Structure component', () => {
     const wrapper: Wrapper<ShareStructure> = createComponent(shareClass, -1, '1', null, [])
     const inputElement: Wrapper<Vue> = wrapper.find(txtMaxShares)
 
-    inputElement.setValue('10000000000000000000') // 20 chars - valid
+    // try 20 chars (valid)
+    inputElement.setValue('10000000000000000000')
     inputElement.trigger('change')
     await waitForUpdate()
 

@@ -255,19 +255,23 @@ export default class ListShareClass extends Vue {
   // Enum for template
   readonly RouteNames = RouteNames
 
-  readonly headers: Array<any> = [
-    {
-      text: 'Name of Share Class or Series',
-      align: 'start',
-      sortable: false,
-      value: 'name',
-      class: 'share-structure-header'
-    },
-    { text: 'Maximum Number of Shares', value: 'maxNumberOfShares', class: 'share-structure-header' },
-    { text: 'Par Value', value: 'parValue', class: 'share-structure-header' },
-    { text: 'Currency', value: 'currency', class: 'share-structure-header' },
-    { text: 'Special Rights or Restrictions', value: 'hasRightsOrRestrictions', class: 'share-structure-header' }
-  ]
+  get headers (): Array<any> {
+    const headers = [
+      {
+        text: 'Name of Share Class or Series',
+        align: 'start',
+        sortable: false,
+        value: 'name',
+        class: 'share-structure-header'
+      },
+      { text: 'Maximum Number of Shares', value: 'maxNumberOfShares', class: 'share-structure-header' },
+      { text: 'Par Value', value: 'parValue', class: 'share-structure-header' },
+      { text: 'Currency', value: 'currency', class: 'share-structure-header' },
+      { text: 'Special Rights or Restrictions', value: 'hasRightsOrRestrictions', class: 'share-structure-header' }
+    ]
+    if (!this.isSummary) headers.push({ text: '', value: 'actions' })
+    return headers
+  }
 
   /** Returns a par value formatted for display in the shares table. */
   formatParValue (item: any): string {
