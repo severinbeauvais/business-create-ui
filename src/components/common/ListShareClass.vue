@@ -464,42 +464,32 @@ tbody {
 
     // borders between header elements
     thead > tr > th {
-      box-shadow: 1px 0 0 0 rgba(0,0,0,0.1);
+      box-shadow: 1px 2px 0 0 rgba(0,0,0,0.1);
       border: none !important;
-    }
-
-    // border between header and first row
-    tbody > tr:first-of-type > td {
-      border-top: 3px solid rgba(0,0,0,0.1);
     }
 
     // set width of "Name of Share Class or Series"
     .share-structure-header:nth-child(1) {
-      // width: 280px;
       width: 30%;
     }
 
     // set width of "Maximum Number of Shares"
     .share-structure-header:nth-child(2) {
-      // width: 170px;
       width: 16%;
     }
 
     // set width of "Par Value"
     .share-structure-header:nth-child(3) {
-      // width: 170px;
       width: 16%;
     }
 
     // set width of "Currency"
     .share-structure-header:nth-child(4) {
-      // width: 96px;
       width: 9.75%;
     }
 
     // set width of "Special Rights or Restrictions"
     .share-structure-header:nth-child(5) {
-      // width: 135px;
       width: 13.5%;
     }
   }

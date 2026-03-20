@@ -45,8 +45,6 @@
                             filled
                             label="Maximum Number of Shares"
                             persistent-hint
-                            type="number"
-                            hide-spin-buttons
                             :hint="'Enter the maximum number of shares in the ' + shareStructure.type"
                             :rules="getMaximumShareRule()"
                             :disabled="hasNoMaximumShares"
@@ -88,8 +86,6 @@
                             :rules="getParValueRule()"
                             hint="Enter the initial value of each share"
                             persistent-hint
-                            type="number"
-                            hide-spin-buttons
                             :value="numberToString(shareStructure.parValue)"
                             @input="shareStructure.parValue = stringToNumber($event)"
                           />
@@ -241,7 +237,7 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
 
   /** Returns a string converted to a number for assignment to a variable. */
   stringToNumber (value: string): number | null {
-    return (event === '') ? null : Number(value)
+    return (value === '') ? null : Number(value)
   }
 
   // Rules
@@ -277,7 +273,7 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
     if (!this.hasNoMaximumShares) {
       rules = [
         (v: string) => (v !== '' && v !== null && v !== undefined) || 'Number of shares is required',
-        (v: string) => Number.isInteger(+v) || 'Must be a whole number',
+        (v: string) => /^-?\d+$/.test(v) || 'Must be a whole number',
         (v: string) => (+v > 0) || 'Number must be greater than 0',
         (v: string) => (v.length <= 20) || 'Maximum 20 characters',
         (v: string) => (SignificantDigits(v) <= 16) || 'Amount has too many significant digits'
