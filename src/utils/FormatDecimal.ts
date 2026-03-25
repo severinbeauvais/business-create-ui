@@ -26,8 +26,18 @@ export function FormatDecimal (
 
     if (exp > 0) {
       const combined = intPart + fracPart
-      const newInt = combined.padEnd(intPart.length + exp, '0')
-      const newFrac = combined.slice(intPart.length + exp)
+      const shiftIndex = intPart.length + exp
+      let newInt: string
+      let newFrac: string
+      if (shiftIndex >= combined.length) {
+        // Decimal point moves past the existing digits; pad with zeros.
+        newInt = combined.padEnd(shiftIndex, '0')
+        newFrac = ''
+      } else {
+        // Decimal point moves within the existing digits.
+        newInt = combined.slice(0, shiftIndex)
+        newFrac = combined.slice(shiftIndex)
+      }
       str = sign + newInt + (newFrac ? '.' + newFrac : '')
     } else if (exp < 0) {
       const combined = intPart + fracPart
