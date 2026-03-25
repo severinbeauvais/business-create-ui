@@ -4,7 +4,7 @@
       <ul>
         <li class="share-structure-container px-6 py-10">
           <div class="meta-container">
-            <label class="share-structure-header">
+            <label class="share-structure-label">
               <span v-if="activeIndex === -1">Add Share {{ shareStructure.type }}</span>
               <span v-else>Edit Share {{ shareStructure.type }}</span>
             </label>
@@ -21,8 +21,8 @@
                   v-model="shareStructure.name"
                   filled
                   :label="shareStructure.type + ' Name [Shares]'"
-                  :hint="'Enter the name of the  '+ shareStructure.type.toLowerCase() +
-                    '  - the words &quot;Shares&quot; is automatically added'"
+                  :hint="'Enter the name of the ' + shareStructure.type.toLowerCase() +
+                    ' - the words &quot;Shares&quot; is automatically added'"
                   :rules="getNameRule()"
                   suffix="Shares"
                   persistent-hint
@@ -40,9 +40,10 @@
                     <template #label>
                       <v-row>
                         <v-col cols="6">
+                          <!-- Use type="number" to restrict input to numbers even though the v-model is a string. -->
                           <v-text-field
                             id="txt-max-shares"
-                            v-model.number="shareStructure.maxNumberOfShares"
+                            v-model="maxNumberOfShares"
                             filled
                             label="Maximum Number of Shares"
                             persistent-hint
@@ -80,9 +81,10 @@
                     <template #label>
                       <v-row>
                         <v-col cols="6">
+                          <!-- Use type="number" to restrict input to numbers even though the v-model is a string. -->
                           <v-text-field
                             id="class-par-value"
-                            v-model.number="shareStructure.parValue"
+                            v-model="parValue"
                             filled
                             label="Par Value"
                             :rules="getParValueRule()"
@@ -127,7 +129,7 @@
                       <v-text-field
                         id="series-par-value"
                         label="Par Value"
-                        :value="shareStructure.parValue"
+                        :value="parValue"
                         :disabled="true"
                         width="10"
                       />
@@ -207,6 +209,7 @@ import { ShareClassIF, FormIF } from '@/interfaces'
 import { CurrencyLookupMixin } from '@/mixins'
 import { VuetifyRuleFunction } from '@/types'
 import { SignificantDigits } from '@/utils/SignificantDigits'
+import { FormatDecimal } from '@/utils'
 
 @Component({})
 export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
@@ -226,9 +229,17 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
   formValid = true
   hasNoMaximumShares = false
   hasNoParValue = false
+  maxNumberOfShares = '' // v-model, which is converted to number before saving
+  parValue = '' // v-model, which is converted to number before saving
 
   readonly excludedWordsListForClass: string [] = ['share', 'shares', 'value']
   readonly excludedWordsListForSeries: string [] = ['share', 'shares']
+
+  /** Returns a value formatted for use as v-model. */
+  numberToString (value: number): string {
+    // if value is null, return empty string (instead of invalid number)
+    return (value !== null) ? FormatDecimal(value, { minDecimals: 0, grouping: false }) : ''
+  }
 
   // Rules
   getNameRule (): Array<VuetifyRuleFunction> {
@@ -263,9 +274,11 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
     if (!this.hasNoMaximumShares) {
       rules = [
         (v: string) => (v !== '' && v !== null && v !== undefined) || 'Number of shares is required',
+        (v: string) => Number.isFinite(+v) || 'Must be a valid number',
         (v: string) => /^-?\d+$/.test(v) || 'Must be a whole number',
-        (v: string) => (+v > 0) || 'Number must be greater than 0',
-        (v: string) => (v && v.toString().length < 16) || 'Number must be less than 16 digits'
+        (v: string) => (+v > 0) || 'Must be greater than 0',
+        (v: string) => (v.length <= 20) || 'Maximum 20 characters',
+        (v: string) => (SignificantDigits(v) <= 16) || 'Too many significant digits'
       ]
       // To prevent changing share class value to a lower value after adding series.
       if (this.isClass && this.activeIndex !== -1 && !this.hasNoMaximumShares &&
@@ -295,10 +308,11 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
     if (this.hasNoParValue) return []
 
     return [
-      v => (v !== '' && v !== null && v !== undefined) || 'Par value is required',
-      v => Number.isFinite(Number(v)) || 'Par value must be a valid number',
-      v => v > 0 || 'Amount must be greater than 0',
-      v => SignificantDigits(v) <= 16 || 'Amount has too many significant digits'
+      (v: string) => (v !== '' && v !== null && v !== undefined) || 'Par value is required',
+      (v: string) => Number.isFinite(+v) || 'Must be a valid number',
+      (v: string) => (+v > 0) || 'Must be greater than 0',
+      (v: string) => (v.length <= 38) || 'Maximum 38 characters',
+      (v: string) => (SignificantDigits(v) <= 16) || 'Too many significant digits'
     ]
   }
 
@@ -315,6 +329,12 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
       this.shareStructure = { ...this.initialValue }
       this.hasNoMaximumShares = !this.shareStructure.hasMaximumShares
       this.hasNoParValue = !this.shareStructure.hasParValue
+      if (this.shareStructure.hasMaximumShares) {
+        this.maxNumberOfShares = this.numberToString(this.shareStructure.maxNumberOfShares)
+      }
+      if (this.shareStructure.hasParValue) {
+        this.parValue = this.numberToString(this.shareStructure.parValue)
+      }
 
       if (this.activeIndex !== -1) {
         const name = this.shareStructure.name
@@ -351,6 +371,8 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
     shareStructureToAdd.name = `${shareStructureToAdd.name} Shares`
     shareStructureToAdd.hasMaximumShares = !this.hasNoMaximumShares
     shareStructureToAdd.hasParValue = !this.hasNoParValue
+    shareStructureToAdd.maxNumberOfShares = this.hasNoMaximumShares ? null : Number(this.maxNumberOfShares)
+    shareStructureToAdd.parValue = this.hasNoParValue ? null : Number(this.parValue)
     return shareStructureToAdd
   }
 
@@ -371,14 +393,14 @@ export default class ShareStructure extends Mixins(CurrencyLookupMixin) {
 
   changeMaximumShareFlag (): void {
     if (this.hasNoMaximumShares) {
-      this.shareStructure.maxNumberOfShares = null
+      this.maxNumberOfShares = ''
     }
   }
 
   changeParValueFlag (): void {
     if (this.hasNoParValue) {
       this.shareStructure.currency = null
-      this.shareStructure.parValue = null
+      this.parValue = ''
     }
   }
 
@@ -454,7 +476,7 @@ li {
   }
 }
 
-.share-structure-header {
+.share-structure-label {
   font-size: $px-16;
   font-weight: bold;
   line-height: 1.5rem;
