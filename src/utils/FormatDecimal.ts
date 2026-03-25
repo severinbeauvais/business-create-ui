@@ -41,9 +41,17 @@ export function FormatDecimal (
       str = sign + newInt + (newFrac ? '.' + newFrac : '')
     } else if (exp < 0) {
       const combined = intPart + fracPart
-      const zeros = '0'.repeat(Math.abs(exp) - intPart.length)
-      const newFrac = zeros + combined
-      str = sign + '0.' + newFrac
+      const shift = Math.abs(exp)
+      if (shift >= intPart.length) {
+        const leadingZeros = '0'.repeat(shift - intPart.length)
+        const newFrac = leadingZeros + combined
+        str = sign + '0.' + newFrac
+      } else {
+        const splitPos = intPart.length - shift
+        const newInt = intPart.slice(0, splitPos)
+        const newFrac = intPart.slice(splitPos) + fracPart
+        str = sign + newInt + (newFrac ? '.' + newFrac : '')
+      }
     } else {
       str = sign + intPart + (fracPart ? '.' + fracPart : '')
     }

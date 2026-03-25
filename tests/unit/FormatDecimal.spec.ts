@@ -46,10 +46,13 @@ describe('FormatDecimal', () => {
   it('expands unusual scientific notation correctly', () => {
     // exponent smaller than fractional length
     expect(FormatDecimal(1.234E-2, { minDecimals: 0, grouping: false })).toBe('0.01234')
+    expect(FormatDecimal('1.234E-2', { minDecimals: 0, grouping: false })).toBe('0.01234')
     expect(FormatDecimal(1.234E2, { minDecimals: 0, grouping: false })).toBe('123.4')
+    expect(FormatDecimal('1.234E2', { minDecimals: 0, grouping: false })).toBe('123.4')
     expect(FormatDecimal(12E-1, { minDecimals: 0, grouping: false })).toBe('1.2')
+    expect(FormatDecimal('12E-1', { minDecimals: 0, grouping: false })).toBe('1.2')
     expect(FormatDecimal(100E3, { minDecimals: 0, grouping: false })).toBe('100000')
-    expect(FormatDecimal('1.234e2', { minDecimals: 0, grouping: false })).toBe('123.4')
+    expect(FormatDecimal('100E3', { minDecimals: 0, grouping: false })).toBe('100000')
   })
 
   it('handles max-significant-digits numbers', () => {
