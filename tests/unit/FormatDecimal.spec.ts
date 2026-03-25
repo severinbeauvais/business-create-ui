@@ -42,4 +42,18 @@ describe('FormatDecimal', () => {
     // max 38 characters input
     expect(FormatDecimal(1E37, { minDecimals: 0, grouping: false })).toBe('10000000000000000000000000000000000000')
   })
+
+  it('expands unusual scientific notation correctly', () => {
+    // exponent smaller than fractional length
+    expect(FormatDecimal(1.234E-2, { minDecimals: 0, grouping: false })).toBe('0.01234')
+    expect(FormatDecimal(1.234E2, { minDecimals: 0, grouping: false })).toBe('123.4')
+    expect(FormatDecimal(12E-1, { minDecimals: 0, grouping: false })).toBe('1.2')
+  })
+
+  it('handles max-significant-digits numbers', () => {
+    // max 38 characters input
+    expect(FormatDecimal(1234567890123456, { minDecimals: 0, grouping: false })).toBe('1234567890123456')
+    expect(FormatDecimal(1.234567890123456E15, { minDecimals: 0, grouping: false })).toBe('1234567890123456')
+    expect(FormatDecimal(1.234567890123456E-1, { minDecimals: 0, grouping: false })).toBe('0.1234567890123456')
+  })
 })
