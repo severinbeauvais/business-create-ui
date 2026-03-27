@@ -1,5 +1,6 @@
 /**
- * Formats any JS number or numeric string:
+ * Formats any JS number or numeric string. This works around the limitations of toLocaleString
+ * (such as max 21 fractional digits). This function:
  * - Expands scientific notation
  * - Preserves all digits
  * - Shows at least "minDecimals"
